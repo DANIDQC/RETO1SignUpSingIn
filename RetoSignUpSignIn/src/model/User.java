@@ -5,10 +5,7 @@
  */
 package model;
 
-/**
- *Esta clase contiene información personal de un usuario
- * @author oscar
- */
+
 
 //Clase que encapsula la informacion del usuario
 
