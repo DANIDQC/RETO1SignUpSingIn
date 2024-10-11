@@ -5,23 +5,27 @@
  */
 package controladores;
 
-import factorias.FactorySignable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import model.Signable;
 import retosignupsignin.Client;
 
 /**
  *
  * @author 2dam
  */
-public class SignInController {
+public class SignInController implements Signable{
     Client signIn;
 
     public SignInController() {
-        try {
-            this.signIn = FactorySignable.getSignable().signIn();
-        } catch (Exception ex) {
-            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       
+    }
+
+    @Override
+    public Client signIn() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Client signUp() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

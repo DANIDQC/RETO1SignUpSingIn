@@ -3,16 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package retosignupsignin;
+package controladores;
 
 import model.Signable;
+import model.User;
+import retosignupsignin.Client;
 
 /**
  *
  * @author 2dam
  */
-public class Client implements Signable{
- 
+public class SignUpController implements Signable {
+    public User getUser(){
+        User us = new User();
+        return us;
+    }
+
     @Override
     public Client signIn() throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -22,5 +28,4 @@ public class Client implements Signable{
     public Client signUp() throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
 }

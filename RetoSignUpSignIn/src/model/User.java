@@ -17,6 +17,10 @@ public class User {
     private String usuario;
     private String contraseina;
     private Integer edad;
+    
+    public User(){
+        
+    }
 
     public String getDni() {
         return dni;

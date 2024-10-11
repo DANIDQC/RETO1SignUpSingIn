@@ -5,7 +5,10 @@
  */
 package factorias;
 
-import interfaces.Signable;
+import controladores.SignInController;
+import controladores.SignUpController;
+import model.Signable;
+import retosignupsignin.Client;
 
 /**
  *
@@ -13,14 +16,15 @@ import interfaces.Signable;
  */
 
 public class FactorySignable {
-    
-    public static Signable getSignable(){
+    public static Signable signable;
+    public static Client getSignable() throws Exception{
         boolean userCorrect=true;
         if (userCorrect) {
-            return new Signable();
+            signable = new SignInController();
+            return signable.signIn(); 
         } else {
-            System.out.println("Error al loggearse.");
-            return new Signable(); 
+            signable = new SignUpController();
+            return signable.signUp(); 
         }
     }
 }
