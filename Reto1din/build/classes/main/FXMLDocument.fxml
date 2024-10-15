@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<BorderPane prefHeight="650.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.FXMLDocumentController">
+    <top>
+        <Label style="-fx-font-size: 32px; -fx-font-weight: bold;" text="Crea tu cuenta" BorderPane.alignment="CENTER" />
+    </top>
+    <center>
+        <HBox alignment="CENTER" spacing="30.0" style="-fx-padding: 30;" BorderPane.alignment="CENTER">
+            <children>
+                <VBox alignment="CENTER_LEFT" spacing="15.0" prefWidth="400.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label style="-fx-font-size: 18px;" text="Nombre y Apellidos" />
+                            <TextField fx:id="idNombreApellido" prefWidth="300.0" />
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label style="-fx-font-size: 18px;" text="Dirección" />
+                            <TextField fx:id="idDireccion" prefWidth="300.0" />
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label style="-fx-font-size: 18px;" text="Ciudad" />
+                            <TextField fx:id="idCiudad" prefWidth="300.0" />
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label style="-fx-font-size: 18px;" text="Código Postal" />
+                            <TextField fx:id="idCodigoPostal" prefWidth="300.0" />
+                        </VBox>
+                    </children>
+                </VBox>
+
+                <VBox alignment="CENTER_LEFT" spacing="15.0" prefWidth="400.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label style="-fx-font-size: 18px;" text="Correo electrónico" />
+                            <TextField fx:id="idCorreoElectronico" prefWidth="300.0" />
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label style="-fx-font-size: 18px;" text="Contraseña" />
+                            <StackPane prefHeight="22.0" prefWidth="300.0">
+                                <children>
+                                    <PasswordField fx:id="idContrasena" prefWidth="300.0" />
+                                    <TextField fx:id="idContrasenaTextField" managed="false" prefWidth="300.0" visible="false" />
+                                </children>
+                            </StackPane>
+                            <CheckBox fx:id="idMostrarContrasena" onAction="#verContra" text="Mostrar contraseña" />
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label style="-fx-font-size: 18px;" text="Repetir contraseña" />
+                            <StackPane prefHeight="22.0" prefWidth="300.0">
+                                <children>
+                                    <PasswordField fx:id="idRepetirContrasena" prefWidth="300.0" />
+                                    <TextField fx:id="idRepetirContrasenaTextField" managed="false" prefWidth="300.0" visible="false" />
+                                </children>
+                            </StackPane>
+                            <CheckBox fx:id="idMostrarRepetirContrasena" onAction="#verContraRepe" text="Mostrar contraseña" />
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                            <CheckBox fx:id="idActivo" text="Activo" />
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </center>
+    <bottom>
+        <VBox alignment="CENTER" style="-fx-padding: 20;">
+            <Button fx:id="btnRegistrarse" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="180.0" style="-fx-font-size: 18px;" text="Registrarse" />
+        </VBox>
+    </bottom>
+</BorderPane>
