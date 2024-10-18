@@ -1,31 +1,36 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controladores;
 
-import model.Signable;
+import dbConexion.DAO;
+import java.sql.SQLException;
 import model.User;
-import retosignupsignin.Client;
 
 /**
  *
  * @author 2dam
  */
-public class SignUpController implements Signable {
-    public User getUser(){
-        User us = new User();
-        return us;
+public class SignUpController {
+
+    // Método para crear un nuevo usuario (en este caso retorna un objeto User vacío)
+    public User getUser() {
+        return new User();
     }
 
-    @Override
-    public Client signIn() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Client signUp() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // Método para registrar el usuario y su partner
+    public void SignUp(User usuario) throws SQLException {
+        
+            DAO dao = new DAO(); // Crear una instancia de DAO
+            try {
+                dao.conectar(); // Establecer conexión con la base de datos
+                dao.RegistrarPartner(usuario); // Registrar Partner
+                dao.RegistrarUsuario(usuario); // Registrar Usuario
+                System.out.println("Registro exitoso.");
+            } catch (SQLException e) {
+                System.err.println("Error al registrar el usuario: " + e.getMessage());
+                // Aquí podrías capturar la excepción y mostrar un mensaje al usuario, o re-lanzar la excepción
+                throw e;
+            } finally {
+                dao.desconectar(); // Asegurarse de cerrar la conexión después de la operación
+            }
+        
     }
 }

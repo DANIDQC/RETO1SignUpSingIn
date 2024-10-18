@@ -23,7 +23,7 @@ public class FactorySignable {
             signable = new SignInController();
             return signable.signIn(); 
         } else {
-            signable = new SignUpController();
+            //signable = new SignUpController();
             return signable.signUp(); 
         }
     }

@@ -1,4 +1,4 @@
-package retoSignUpSignIn;
+package retosignupsignin;
 
 import controladores.BienvenidaController;
 import controladores.SignUpController;
@@ -12,7 +12,7 @@ import java.net.URL;
 import javafx.application.Application;
 import model.User;
 
-public class MainApplication extends Application {
+public class MainApplicationSignUp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -36,26 +36,20 @@ public class MainApplication extends Application {
             }
         }
 
-        // Verifica si el archivo FXML se encuentra
-        URL fxmlUrl = getClass().getResource("/interfaces/PantallaBienvenida.fxml");
-        if (fxmlUrl == null) {
-            System.out.println("El archivo FXML no se ha encontrado.");
-            return;
-        }
-
-        // Cargar el archivo FXML
-        FXMLLoader loader = new FXMLLoader(fxmlUrl);
-        Parent root = loader.load();
-
         // Obtener el controlador vinculado al FXML
-        BienvenidaController controller = loader.getController();
-        String username="Josemiguel@gmail.com";
+        SignUpController controller2 = new SignUpController();
+        String username = "MariaFuente@gmail.com";
+        User usuario = new User();
+        usuario.setUsuario("Josemiguel@gmail.com");
+        usuario.setContraseina("abcd*1234");
+        usuario.setDni("12345678B");
+        usuario.setNombre("Jose");
+        usuario.setApellido("Miguel");
+        usuario.setEdad(18);
+      
         // Establecer el nombre del usuario en el Label lblUser
-        controller.setUserName(username);
+        controller2.SignUp(usuario);
         // Crear y mostrar la escena
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
     }
 
     public static void main(String[] args) {
