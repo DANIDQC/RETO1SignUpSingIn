@@ -8,30 +8,64 @@ package libreria;
 import java.io.Serializable;
 
 /**
- *
- * @author Guillermo
+ * La clase {@code Stream} representa un flujo de datos que incluye información 
+ * de un usuario y un mensaje asociado, utilizada para enviar o recibir datos 
+ * en el sistema.
+ * @author Guillermo Flecha
  */
 public class Stream implements Serializable{
+    /**
+     * El usuario asociado a este flujo de datos.
+     */
     private User usuario;
-    private String mensaje;
     
-    public Stream(User usuario, String mensaje){
+    /**
+     * El mensaje asociado a este flujo de datos.
+     */
+    private String mensaje;
+    /**
+     * Crea una nueva instancia de {@code Stream} con el usuario y mensaje especificados.
+     *
+     * @param usuario el usuario asociado al flujo de datos
+     * @param mensaje el mensaje asociado al flujo de datos
+     */
+    public Stream(User usuario, String mensaje) {
         this.usuario = usuario;
         this.mensaje = mensaje;
     }
 
+    /**
+     * Obtiene el usuario asociado a este flujo de datos.
+     *
+     * @return el usuario del flujo de datos
+     */
     public User getUsuario() {
         return usuario;
     }
 
+    /**
+     * Establece el usuario asociado a este flujo de datos.
+     *
+     * @param usuario el nuevo usuario del flujo de datos
+     */
     public void setUsuario(User usuario) {
         this.usuario = usuario;
     }
 
+    /**
+     * Obtiene el mensaje asociado a este flujo de datos.
+     *
+     * @return el mensaje del flujo de datos
+     */
     public String getMensaje() {
         return mensaje;
     }
 
+    /**
+     * Establece el mensaje asociado a este flujo de datos.
+     *
+     * @param mensaje el nuevo mensaje del flujo de datos
+     */
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
     }
