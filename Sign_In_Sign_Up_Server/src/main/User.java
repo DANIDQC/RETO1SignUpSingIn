@@ -14,12 +14,14 @@ public class User {
     private String pass;
     private boolean action;
     private String contra;
+    private String nombre;
     private String street;
     private String city;
     private int zip;
 
-    public User(String login, String pass, boolean action, String contra, String street, String city, int zip) {
-        
+    public User(String login, String pass, boolean action, String contra, String street, String city, int zip, String nombre) {
+
+        this.nombre = nombre;
         this.login = login;
         this.pass = pass;
         this.action = action;
@@ -28,6 +30,14 @@ public class User {
         this.city = city;
         this.zip = zip;
         
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getLogin() {

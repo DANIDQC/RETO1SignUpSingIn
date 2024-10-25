@@ -5,11 +5,15 @@
  */
 package main;
 
+import java.sql.Connection;
+
 /**
  *
  * @author 2dam
  */
-public interface Signable {
-    public User signIn(User user);
-    public User signUp(User user); 
+public interface Signable { 
+
+    public User signIn(User user, Connection connection) throws Exception;
+
+    public User signUp(User user, Connection connection);
 }

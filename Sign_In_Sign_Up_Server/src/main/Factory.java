@@ -4,6 +4,11 @@
  * and open the template in the editor.
  */
 package main;
+
+import java.sql.Connection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author 2dam
@@ -11,14 +16,18 @@ package main;
 public class Factory {
     public static Signable sign;
     
-    public static User action(String message, User user){
+    public static User action(String message, User user, Connection connection){
         if (message.equals("SignIn")){
-            return sign.signIn(user);
+            try {
+                return sign.signIn(user, connection);
+            } catch (Exception ex) {
+                message = "loginError";
+            }
         } else if (message.equals("SignUp")){
-            return sign.signUp(user);
+            return sign.signUp(user, connection);
         } else{
             message = "ActionError";
-            return null;
         }
+        return user;
     }
 }

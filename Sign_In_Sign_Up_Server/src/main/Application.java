@@ -1,62 +1,82 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
-
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Application {
 
     private static final int PUERTO = 50100;
+    private static final List<Thread> workerThreads = new ArrayList<>();
+    private static volatile boolean isRunning = true;
+
     public static void main(String[] args) throws SQLException {
         Pool connectionPool = new Pool(3);
         Signable sign = null;
-        try (ServerSocket serverSocket = new ServerSocket(PUERTO)) {
-            System.out.println("Servidor escuchando en el puerto " + PUERTO);
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                new Thread(() -> {
-                    try (ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
-                         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true)) {
-                        String message = objectInputStream.readUTF();  
-                        Object object = objectInputStream.readObject();
-                        if (object instanceof User) {
-                            User user = (User) object;
-                            boolean result = false;
-                            if (message.equalsIgnoreCase("signIn")) {
-                                user = sign.signIn(user); 
-                            } else if (message.equalsIgnoreCase("signUp")) {
-                                user = sign.signUp(user); 
-                            } else {
-                                writer.println("Error: Acción no válida.");
-                                return;
-                            }
+        ServerSocket serverSocket = null;
 
-                            if (result) {
-                                writer.println("OK: Acción '" + message + "' realizada con éxito para el usuario: " + user.getLogin());
-                            } else {
-                                writer.println("Error: No se pudo completar la acción '" + message + "' para el usuario: " + user.getLogin());
-                            }
-                        } else {
-                            writer.println("Error: Objeto recibido no es de tipo User.");
-                        }
-                    } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }).start(); 
+        try {
+            serverSocket = new ServerSocket(PUERTO);
+            System.out.println("Servidor escuchando en el puerto " + PUERTO);
+
+            Thread keyboardReaderThread = new Thread(new KeyboardEscListener());
+            keyboardReaderThread.start();
+
+            while (isRunning) {
+                Socket clientSocket = serverSocket.accept();
+                Worker worker = new Worker(clientSocket, connectionPool, sign);
+                Thread workerThread = new Thread(worker);
+                workerThreads.add(workerThread);
+                workerThread.start();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             connectionPool.closeAllConnections();
+            new Thread(new ThreadTerminator()).start();
+        }
+    }
+
+    static class KeyboardEscListener implements Runnable {
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    if (System.in.available() > 0) {
+                        int key = System.in.read();
+                        if (key == 27) {
+                            System.out.println("Tecla Esc presionada. Cerrando el servidor y todos los hilos...");
+                            isRunning = false;
+                            break;
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static class ThreadTerminator implements Runnable {
+        @Override
+        public void run() {
+            for (Thread workerThread : workerThreads) {
+                if (workerThread.isAlive()) {
+                    workerThread.interrupt();
+                }
+            }
+            System.out.println("Todos los hilos de trabajo han sido interrumpidos.");
+            System.exit(0);
         }
     }
 }

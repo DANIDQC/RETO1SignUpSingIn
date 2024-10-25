@@ -1,35 +1,67 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import main.Pool;
+import main.Signable;
+import main.User;
 
-/**
- *
- * @author 2dam
- */
-public class Worker extends Thread {
+public class Worker implements Runnable {
+    private Socket clientSocket;
+    private Pool connectionPool;
+    private Signable sign;
 
-    private int n;
-    private User usuario;
-    private String message;
-
-    Worker(User usuario, String message) {
-        this.usuario = usuario;
-        this.message = message;
-        this.start();
+    public Worker(Socket clientSocket, Pool connectionPool, Signable sign) {
+        this.clientSocket = clientSocket;
+        this.connectionPool = connectionPool;
+        this.sign = sign;
     }
 
+    @Override
     public void run() {
-        Signable sign = null;
-        if (message.equals("SignIn")) {
-            sign.signIn(usuario);
-        } else if (message.equals("SignUp")) {
-            sign.signUp(usuario);
-        } else {
-            System.out.println("ERROR");
-        }
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+             PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
+            String message = objectInputStream.readUTF();
+            Object object = objectInputStream.readObject();
+
+            if (object instanceof User) {
+                User user = (User) object;
+                boolean result = false;
+
+                // Obtener una conexión del pool de conexiones
+                try (Connection connection = connectionPool.getConnection()) {
+                    if (message.equalsIgnoreCase("signIn")) {
+                        user = sign.signIn(user, connection); // El DAO utiliza la conexión
+                    } else if (message.equalsIgnoreCase("signUp")) {
+                        user = sign.signUp(user, connection); // El DAO utiliza la conexión
+                    } else {
+                        writer.println("Error: Acción no válida.");
+                        return;
+                    }
+
+                    if (result) {
+                        writer.println("OK: Acción '" + message + "' realizada con éxito para el usuario: " + user.getLogin());
+                    } else {
+                        writer.println("Error: No se pudo completar la acción '" + message + "' para el usuario: " + user.getLogin());
+                    }
+
+                } catch (Exception e) {
+                    writer.println("Error: Problema con la base de datos.");
+                    e.printStackTrace();
+                } 
+
+            } else {
+                writer.println("Error: Objeto recibido no es de tipo User.");
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
