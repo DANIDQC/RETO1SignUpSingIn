@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="650.0" prefWidth="850.0" style="-fx-background-image: url('/img/fondoPantalla1.png'); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vistas.FXMLSignUpController">
+<BorderPane fx:id="fxmlSignUp" prefHeight="650.0" prefWidth="850.0" style="-fx-background-image: url('/img/fondoPantalla1.png'); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vistas.FXMLSignUpController">
     <center>
         <HBox alignment="CENTER" prefHeight="491.0" prefWidth="850.0" spacing="30.0" style="-fx-padding: 30;" BorderPane.alignment="CENTER">
             <children>

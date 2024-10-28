@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="872.0" style="-fx-background-image: url('/img/fondoPantalla1.png'); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vistas.FXMLLoginController">
+<BorderPane fx:id="fxmlLogin" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="872.0" style="-fx-background-image: url('/img/fondoPantalla1.png'); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vistas.FXMLLoginController">
     <top>
         <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -55,7 +55,7 @@
     <bottom>
         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
-                <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="112.0" text="LOGIN" style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white;">
+                <Button fx:id="btnLogin" mnemonicParsing="false" prefHeight="35.0" prefWidth="112.0" text="LOGIN" style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white;">
                     <font>
                         <Font name="System Bold Italic" size="19.0" />
                     </font>
@@ -74,7 +74,7 @@
                         <Font name="Agency FB" size="30.0" />
                     </font>
                 </Label>
-                <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="200.0" promptText="USER" />
+                <TextField fx:id="txtFieldUsuario" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="200.0" promptText="USER" />
                 <Label style="-fx-text-fill: white;" text="Contraseña">
                     <font>
                         <Font name="Agency FB" size="30.0" />
