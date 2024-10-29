@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane fx:id="fxmlBienvenido" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vistas.BienvenidoController">
+    <children>
+        <ImageView fx:id="imgFondo" fitHeight="600.0" fitWidth="900.0" pickOnBounds="true">
+            <image>
+                <Image url="@/img/fondo.jpg" />
+            </image>
+        </ImageView>
+        <MenuButton fx:id="mbtnOpciones" layoutX="25.0" layoutY="28.0" mnemonicParsing="false" text="Opciones" style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white; -fx-font-weight: bold;">
+            <items>
+                <MenuItem fx:id="opcLogOut" mnemonicParsing="false" text="Desloguearse" onAction="#irALogin"/>
+                <MenuItem fx:id="opcSalir" mnemonicParsing="false" onAction="#cerrarAplicacion" text="Salir" />
+            </items>
+        </MenuButton>
+        <Label fx:id="lblBienvenida" alignment="CENTER" layoutX="333.0" layoutY="211.0" prefHeight="55.0" prefWidth="311.0" text="Bienvenido/a">
+            <font>
+                <Font name="Berlin Sans FB" size="50.0" />
+            </font>
+        </Label>
+        <Label fx:id="lblUser" alignment="CENTER" layoutX="333.0" layoutY="266.0" prefHeight="55.0" prefWidth="311.0">
+            <font>
+                <Font name="Berlin Sans FB" size="50.0" />
+            </font>
+        </Label>
+    </children>
+</Pane>
