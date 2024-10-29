@@ -29,15 +29,15 @@ public class DAO implements Signable {
     }
 
     @Override
-    public User signIn(User usuario, Connection connection) throws Exception {
+    public User signIn(User user, Connection connection) throws Exception {
         try {
             // Obtener la conexión del pool
             connection = connectionPool.getConnection();
 
             // Preparar la consulta SQL
             PreparedStatement stmt = connection.prepareStatement(SELECT_USER);
-            stmt.setString(1, usuario.getLogin());
-            stmt.setString(2, usuario.getPass());
+            stmt.setString(1, user.getLogin());
+            stmt.setString(2, user.getPass());
 
             ResultSet rs = stmt.executeQuery();
 
@@ -45,10 +45,10 @@ public class DAO implements Signable {
                 int id_partner = rs.getInt("partner_id");
                 PreparedStatement stmt1 = connection.prepareStatement(SELECT_PARTNER);
                 stmt1.setInt(1, id_partner);
-                
+
                 ResultSet rs1 = stmt1.executeQuery();
-                if (rs1.next()){
-                    usuario.setNombre(rs.getString("name"));
+                if (rs1.next()) {
+                    user.setNombre(rs.getString("name"));
                 }
             }
         } catch (SQLException | InterruptedException ex) {
@@ -63,11 +63,47 @@ public class DAO implements Signable {
                 }
             }
         }
-        return usuario;
+        return user;
     }
 
     @Override
     public User signUp(User user, Connection connection) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            // Obtener la conexión del pool
+            connection = connectionPool.getConnection();
+
+            // Preparar la consulta SQL
+            PreparedStatement stmt = connection.prepareStatement(SIGN_PARTNER);
+            stmt.setString(1, user.getNombre());
+            stmt.setString(2, user.getStreet());
+            stmt.setString(3, user.getCity());
+            stmt.setInt(4, user.getZip());
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                PreparedStatement stmt1 = connection.prepareStatement(ID_PARTNER);
+                ResultSet rs1 = stmt1.executeQuery();
+
+                if (rs1.next()) {
+                    int id_partner = rs1.getInt("id");
+                    PreparedStatement stmt2 = connection.prepareStatement(SIGN_UP);
+                    stmt2.setString(1, user.getLogin());
+                    stmt2.setString(2, user.getPass());
+                    stmt2.setBoolean(3, user.isAction());
+                    stmt2.setInt(4, id_partner);
+
+                    ResultSet rs2 = stmt1.executeQuery();
+
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return user;
     }
+
 }
