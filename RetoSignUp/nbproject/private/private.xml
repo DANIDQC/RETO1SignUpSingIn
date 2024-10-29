@@ -4,7 +4,8 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/2dam.TARTANGALH/Documents/NetBeansProjects/RetoSignUp/src/controlador/Cliente.java</file>
-            <file>file:/C:/Users/2dam.TARTANGALH/Documents/NetBeansProjects/RetoSignUp/test/vistas/FXMLLoginControllerTest.java</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Documents/NetBeansProjects/RetoSignUp/src/vistas/FXMLLoginController.java</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Documents/NetBeansProjects/RetoSignUp/src/vistas/FXMLLogin.fxml</file>
             <file>file:/C:/Users/2dam.TARTANGALH/Documents/NetBeansProjects/RetoSignUp/src/vistas/MainLogin.java</file>
         </group>
     </open-files>

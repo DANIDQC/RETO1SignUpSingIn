@@ -19,7 +19,7 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
  * comportamiento de la vista de inicio de sesión utilizando el framework
  * TestFX.
  *
- * @autor Guillermo Flecha
+ * @autor Andoni Gracia
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FXMLLoginControllerTest extends ApplicationTest {
@@ -32,7 +32,7 @@ public class FXMLLoginControllerTest extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        new  MainLogin().start(stage);
+        new  Main().start(stage);
     }
     
     @Test
@@ -41,19 +41,31 @@ public class FXMLLoginControllerTest extends ApplicationTest {
         write("diu@gmail.com");
         clickOn("#txtPasswordField");
         write("abcd*1234");
-        
-        clickOn("#chBoxMostrar");
-        
-        clickOn("#btnSalir");
-        clickOn("Cancelar");
-        
+        clickOn("#btnLogin");
+        verifyThat("#fxmlBienvenido", isVisible());
+    }
+
+    @Test
+    public void test_RegistrarExistente() {
         clickOn("#btnRegistrarse");
         verifyThat("#fxmlSignUp", isVisible());
-        
+
         clickOn("#idNombreApellido");
-        write("Guillermo Flecha Vega");
-        
-        clickOn("#btnSalirApp");
-        clickOn("Aceptar");
+        write("Andoni Garcia Alvarez");
+        clickOn("#idDireccion");
+        write("Gran Via N8");
+        clickOn("#idCiudad");
+        write("Bilbao");
+        clickOn("#idCodigoPostal");
+        write("48011");
+        clickOn("#idCorreoElectronico");
+        write("diu@gmail.com");
+        clickOn("#idContrasena");
+        write("abcd*1234");
+        clickOn("#idRepetirContrasena");
+        write("abcd*1234");
+        clickOn("#idActivo");
+        clickOn("#btnRegistrarse");
+        verifyThat("Ya existe un usuario con este gmail.", isVisible());
     }
 }

@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="fxmlLogin" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="872.0" style="-fx-background-image: url('/img/fondoPantalla1.png'); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vistas.FXMLLoginController">
+<BorderPane fx:id="fxmlLogin" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="872.0" style="-fx-background-image: url('/img/fondoPantalla1.png'); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vistas.FXMLSignInController">
     <top>
         <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -30,23 +30,6 @@
                                 <Insets />
                             </HBox.margin>
                         </ImageView>
-                    </children>
-                </HBox>
-                <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="198.0">
-                    <children>
-                        <Button alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#cerrarApp" prefHeight="42.0" prefWidth="49.0" style="-fx-background-color: transparent; -fx-border-color: transparent;">
-                            <graphic>
-                                <ImageView fx:id="btnSalir" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@/img/fotoSalir.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <HBox.margin>
-                                <Insets right="10.0" />
-                            </HBox.margin>
-                        </Button>
-                        <Button alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#mostrarAlerta"/>
                     </children>
                 </HBox>
             </children>
@@ -87,7 +70,7 @@
                     </children>
                 </StackPane>
                 <CheckBox fx:id="chBoxMostrar" mnemonicParsing="false" onAction="#mostrarContraseña" style="-fx-text-fill: white;" text="Mostrar Contraseña" />
-                <Button fx:id="btnRegistrarse" mnemonicParsing="false" text="¿No tienes cuenta?" style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white;" onAction="#handleSignUpButtonAction"/>
+                <Button fx:id="btnRegistrarse" mnemonicParsing="false" text="¿No tienes cuenta?" style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white;" onAction="#ventanaRegistrarse"/>
             </children>
         </VBox>
     </center>

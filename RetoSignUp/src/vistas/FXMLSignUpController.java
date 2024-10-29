@@ -1,6 +1,8 @@
 package vistas;
 
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -10,12 +12,16 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 
 public class FXMLSignUpController {
-
 
     @FXML
     private TextField idNombreApellido;
@@ -43,15 +49,25 @@ public class FXMLSignUpController {
     private TextField idContrasenaTextField;
     @FXML
     private CheckBox idActivo;
+    @FXML
+    private BorderPane fxmlSignUp;
+    @FXML
+    private boolean oscuro;
+
+    private Main mainApp;
+
+    public void setMainApp(Main mainApp) {
+        this.mainApp = mainApp;
+    }
 
     // Método que se ejecuta cuando se presiona el botón de registro
     @FXML
-    private void handleButtonAction(ActionEvent event) {
+    private void botonRegistrarseExitoso(ActionEvent event) {
 
-        if (idNombreApellido.getText().trim().isEmpty() || idDireccion.getText().isEmpty()
-                || idCiudad.getText().isEmpty() || idCodigoPostal.getText().isEmpty()
-                || idCorreoElectronico.getText().isEmpty() || idContrasena.getText().isEmpty()
-                || idRepetirContrasena.getText().isEmpty()) {
+        if (idNombreApellido.getText().trim().isEmpty() || idDireccion.getText().trim().isEmpty()
+                || idCiudad.getText().trim().isEmpty() || idCodigoPostal.getText().trim().isEmpty()
+                || idCorreoElectronico.getText().trim().isEmpty() || idContrasena.getText().trim().isEmpty()
+                || idRepetirContrasena.getText().trim().isEmpty()) {
             showAlert("Error", "Completa todos los campos");
             return;
         }
@@ -67,35 +83,60 @@ public class FXMLSignUpController {
             showAlert("Error", "Gmail no válido. Asegúrate de usar una dirección de correo de Gmail.");
             return;
         }
-
-//        User usuario=new User();
-//        usuario.getUsuario();
-//        usuario.setContraseina();
-//        usuario.setDni();
-//        usuario.setNombre();
-//        usuario.setApellido();
-//        usuario.setEdad();
         showAlert("Éxito", "¡Registrado!");
 
     }
 
+    // Método para cambiar el fondo de pantalla a la imagen de París
+    public void cambiarFondoParis(ActionEvent event) {
+        //Se obtiene el estilo del fondo.
+        String estilo = fxmlSignUp.getStyle();
+
+        //Se quita la imagen del fondo.
+        String estiloNuevo = estilo.replace("-fx-background-image: url\\('.*'\\);", "");
+
+        //Se añade al fondo la imagen con el tema oscuro
+        fxmlSignUp.setStyle(estiloNuevo + "-fx-background-image: url('/img/fondoPantallaCambiado.jpg');");
+        oscuro = true;
+    }
+
+    // Método para cambiar el fondo de pantalla a la imagen de San Francisco
+    public void cambiarFondoSanFranciso(ActionEvent event) {
+        //Se obtiene el estilo del fondo.
+        String estilo = fxmlSignUp.getStyle();
+
+        //Se quita la imagen del fondo.
+        String estiloNuevo = estilo.replace("-fx-background-image: url\\('.*'\\);", "");
+
+        //Se añade al fondo la imagen de San Francisco
+        fxmlSignUp.setStyle(estiloNuevo + "-fx-background-image: url('/img/fondoPantalla1.png');");
+        oscuro = true;
+    }
+
+    // Método para manejar la acción del botón de cerrar
     // Método para manejar la acción del botón de cerrar
     @FXML
-    private void cerrarApp(ActionEvent event) {
+    private void volverInicioSesion(ActionEvent event) {
         // Crear una alerta de confirmación
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar salida");
         alert.setHeaderText(null);
-        alert.setContentText("¿Estás seguro de que deseas salir?");
+        alert.setContentText("¿Deseas volver a la ventana de inicio de sesión?");
 
         // Mostrar la alerta y esperar la respuesta del usuario
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Si el usuario confirma la salida, usar Platform.exit() para cerrar la aplicación
-            Platform.exit();
+            // Si el usuario confirma, llama al método para mostrar la ventana de inicio de sesión
+            if (mainApp != null) {
+                try {
+                    mainApp.mostrarLogin(); // Asegúrate de que este método esté definido en Main
+                } catch (Exception ex) {
+                    Logger.getLogger(FXMLSignUpController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         } else {
-            // Si el usuario cancela, no se cierra la aplicación (no es necesario hacer nada aquí)
-            event.consume();  // Aunque no es estrictamente necesario, puedes consumir el evento por consistencia
+            // Si el usuario cancela, no se cierra la aplicación
+            event.consume();  // Consumiendo el evento
         }
     }
 
@@ -130,11 +171,19 @@ public class FXMLSignUpController {
 
         // Marcar el checkbox "Activo" como seleccionado por defecto
         idActivo.setSelected(true);
+
+        ContextMenu menu = new ContextMenu();
+        MenuItem item1 = new MenuItem("Cambiar fondo de pantalla a San Francisco.");
+        item1.setOnAction(this::cambiarFondoSanFranciso);
+        MenuItem item2 = new MenuItem("Cambiar fondo de pantalla a Paris.");
+        item2.setOnAction(this::cambiarFondoParis);
+        menu.getItems().addAll(item1, item2);
+        fxmlSignUp.setOnMouseClicked(event -> controlMenu(event, menu));
     }
 
     // Mostrar alertas de error o éxito
     @FXML
-    private void showAlert(String title, String message) {
+    void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -176,9 +225,32 @@ public class FXMLSignUpController {
             idContrasenaTextField.setManaged(false);
         }
     }
-    
-    
+
     public static void actualizarInterfazConMensaje(String mensaje) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch (mensaje) {
+            case "OK_SIGNUP":
+                //Vaya a la ventana de SignIn
+                break;
+            case "EXCEPCION_INTERNA":
+                //Alert de expcepcion interna
+                break;
+            case "USUARIO_EXISTE_EXCEPCION":
+                //Alert Excepción por usuario existente
+                break;
+            case "EXCEPCION_EN_CONEXIONES":
+                //Alert Error en las conexiones del sistema
+                break;
+        }
+    }
+
+    private void controlMenu(MouseEvent event, ContextMenu menu) {
+        // Verifica si el clic fue hecho con el botón derecho
+        if (event.getButton() == MouseButton.SECONDARY) {
+            // Muestra el menú contextual en la posición del clic
+            menu.show(fxmlSignUp, event.getScreenX(), event.getScreenY());
+        } else {
+            // Oculta el menú si se hace clic con otro botón
+            menu.hide();
+        }
     }
 }

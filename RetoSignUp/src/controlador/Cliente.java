@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import libreria.Signable;
 import libreria.Stream;
-import vistas.FXMLLoginController;
+import vistas.FXMLSignInController;
 import vistas.FXMLSignUpController;
 
 /**
@@ -78,7 +78,7 @@ public class Cliente implements Signable{
             
             String mensaje = (String) entrada.readObject();
            
-            FXMLLoginController.actualizarInterfazConMensaje(mensaje);
+            FXMLSignInController.actualizarInterfazConMensaje(mensaje);
             
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
