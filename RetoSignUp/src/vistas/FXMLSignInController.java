@@ -70,55 +70,45 @@ public class FXMLSignInController implements Initializable {
     private Button btnLogin;
     @FXML
     private BorderPane fxmlLogin;
-    @FXML
-    private boolean fondo;
+
+    private boolean fondo = true;
 
     private Main mainApp;
 
-    public void setMainApp(Main mainApp) {
+     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
+        aplicarFondo();  // Aplica el fondo al inicializar la ventana
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        btnLogin.setOnAction(this::iniciarSesion);
-
         ContextMenu menu = new ContextMenu();
-        MenuItem item1 = new MenuItem("Cambiar fondo de pantalla a San Francisco.");
-        item1.setOnAction(this::cambiarFondoSanFranciso);
-        MenuItem item2 = new MenuItem("Cambiar fondo de pantalla a Paris.");
-        item2.setOnAction(this::cambiarFondoParis);
+        MenuItem item1 = new MenuItem("Cambiar fondo a San Francisco");
+        item1.setOnAction(this::cambiarFondo);
+        MenuItem item2 = new MenuItem("Cambiar fondo a Paris");
+        item2.setOnAction(this::cambiarFondo);
         menu.getItems().addAll(item1, item2);
         fxmlLogin.setOnMouseClicked(event -> controlMenu(event, menu));
-
     }
 
-    public void cambiarFondoParis(ActionEvent event) {
-        //Se obtiene el estilo del fondo.
-        String estilo = fxmlLogin.getStyle();
-
-        //Se quita la imagen del fondo.
-        String estiloNuevo = estilo.replace("-fx-background-image: url\\('.*'\\);", "");
-
-        //Se añade al fondo la imagen con el tema oscuro
-        fxmlLogin.setStyle(estiloNuevo + "-fx-background-image: url('/img/fondoPantallaCambiado.jpg');");
-        //cambiar el boolean oscuro a true
-        fondo = true;
+    private void aplicarFondo() {
+        fxmlLogin.setStyle("-fx-background-image: url('" + mainApp.getFondoActual() + "');");
     }
 
-// Método para cambiar el fondo de pantalla a la imagen de París
-    public void cambiarFondoSanFranciso(ActionEvent event) {
-        //Se obtiene el estilo del fondo.
-        String estilo = fxmlLogin.getStyle();
-
-        //Se quita la imagen del fondo.
-        String estiloNuevo = estilo.replace("-fx-background-image: url\\('.*'\\);", "");
-
-        //Se añade al fondo la imagen con el tema oscuro
-        fxmlLogin.setStyle(estiloNuevo + "-fx-background-image: url('/img/fondoPantalla1.png');");
-        //cambiar el boolean oscuro a true
-        fondo = true;
+    private void cambiarFondo(ActionEvent event) {
+        mainApp.cambiarFondo();
+        aplicarFondo();
     }
+
+    private void controlMenu(MouseEvent event, ContextMenu menu) {
+        if (event.getButton() == MouseButton.SECONDARY) {
+            menu.show(fxmlLogin, event.getScreenX(), event.getScreenY());
+        } else {
+            menu.hide();
+        }
+    }
+
+
 
     // Método que se ejecuta cuando el checkbox es seleccionado/deseleccionado
     @FXML
@@ -133,9 +123,9 @@ public class FXMLSignInController implements Initializable {
             txtFieldContraseña.setVisible(false);
         }
     }
-    
+
     @FXML
-    public void iniciarSesion(ActionEvent event){
+    public void iniciarSesion(ActionEvent event) {
         String nombreUsuario = "NombreDelUsuario"; // Aquí obtendrás el nombre del usuario logueado
 
         // Iniciar la ventana de bienvenida
@@ -159,7 +149,7 @@ public class FXMLSignInController implements Initializable {
     }
 
     public static void actualizarInterfazConMensaje(String mensaje) {
-        switch(mensaje){
+        switch (mensaje) {
             case "OK_SIGNIN":
                 //Vaya a la ventana de SignIn
                 break;
@@ -172,17 +162,6 @@ public class FXMLSignInController implements Initializable {
             case "EXCEPCION_EN_CONEXIONES":
                 //Alert Error en las conexiones del sistema
                 break;
-        }
-    }
-
-    private void controlMenu(MouseEvent event, ContextMenu menu) {
-        // Verifica si el clic fue hecho con el botón derecho
-        if (event.getButton() == MouseButton.SECONDARY) {
-            // Muestra el menú contextual en la posición del clic
-            menu.show(fxmlLogin, event.getScreenX(), event.getScreenY());
-        } else {
-            // Oculta el menú si se hace clic con otro botón
-            menu.hide();
         }
     }
 }

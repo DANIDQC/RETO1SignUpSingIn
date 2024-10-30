@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 public class FXMLSignOutController {
 
     @FXML
-    private Label lblUser;  // Vincula el Label desde el FXML
+    private Label lblUser; 
     
     private Main mainApp;
 
@@ -29,7 +29,7 @@ public class FXMLSignOutController {
     // Método para cambiar el texto del Label lblUser
     public void setUserName(String username) {
         if (username != null && !username.isEmpty()) {
-            lblUser.setText(username);  // Mensaje de bienvenida con el nombre de usuario
+            lblUser.setText(username);
         } else {
             lblUser.setText("Usuario no encontrado");
         } 

@@ -22,22 +22,42 @@ import javafx.stage.WindowEvent;
 public class Main extends Application {
 
     private Stage primaryStage;
+    private boolean fondoPantalla = true;  // Estado global del fondo (true o false)
+    private String fondoActual = "/img/fondoPantalla1.png"; // Imagen inicial del fondo
+
+    public boolean isFondoPantalla() {
+        return fondoPantalla;
+    }
+
+    public void setFondoPantalla(boolean fondoPantalla) {
+        this.fondoPantalla = fondoPantalla;
+    }
+
+    public String getFondoActual() {
+        return fondoActual;
+    }
+
+    public void setFondoActual(String fondoActual) {
+        this.fondoActual = fondoActual;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
         this.primaryStage = stage;
+        primaryStage.setMaximized(true); // Para que la ventana inicie maximizada
         mostrarLogin();
     }
 
     public void mostrarLogin() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLLogin.fxml"));
         Parent root = loader.load();
-
-        // Obtenemos el controlador de la vista de login
         FXMLSignInController controller = loader.getController();
-        controller.setMainApp(this); // Pasar la referencia de MainApp
+        controller.setMainApp(this);
+        aplicarFondo(root); // Aplica el fondo actual
 
         Scene scene = new Scene(root);
+        primaryStage.setMaximized(true); // Para que la ventana inicie maximizada
+
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/logoEquipo.PNG")));
         primaryStage.setTitle("Login");
         primaryStage.setOnCloseRequest(this::cerrarVentana);
@@ -48,12 +68,13 @@ public class Main extends Application {
     public void mostrarSignUp() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLSignUp.fxml"));
         Parent root = loader.load();
-
-        // Obtenemos el controlador de la vista de signup
         FXMLSignUpController controller = loader.getController();
-        controller.setMainApp(this); // Pasar la referencia de MainApp
+        controller.setMainApp(this);
+        aplicarFondo(root); // Aplica el fondo actual
 
         Scene scene = new Scene(root);
+        primaryStage.setMaximized(true); // Para que la ventana inicie maximizada
+
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/logoEquipo.PNG")));
         primaryStage.setTitle("Sign Up");
         primaryStage.setOnCloseRequest(this::cerrarVentana);
@@ -70,11 +91,26 @@ public class Main extends Application {
         controller.setUserName(username); // Pasar el nombre del usuario
 
         Scene scene = new Scene(root);
+        primaryStage.setMaximized(true); // Para que la ventana inicie maximizada
+
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/logoEquipo.PNG")));
-        primaryStage.setTitle("Bienvenido");
+        primaryStage.setTitle("Sign Out");
         primaryStage.setOnCloseRequest(this::cerrarVentana);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void aplicarFondo(Parent root) {
+        root.setStyle("-fx-background-image: url('" + fondoActual + "');");
+    }
+
+    public void cambiarFondo() {
+        if (fondoPantalla) {
+            setFondoActual("/img/fondoPantallaCambiado.jpg");
+        } else {
+            setFondoActual("/img/fondoPantalla1.png");
+        }
+        fondoPantalla = !fondoPantalla;
     }
 
     // Método para manejar el evento de cierre de la ventana

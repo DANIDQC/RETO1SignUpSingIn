@@ -87,30 +87,20 @@ public class FXMLSignUpController {
 
     }
 
-    // Método para cambiar el fondo de pantalla a la imagen de París
-    public void cambiarFondoParis(ActionEvent event) {
-        //Se obtiene el estilo del fondo.
-        String estilo = fxmlSignUp.getStyle();
-
-        //Se quita la imagen del fondo.
-        String estiloNuevo = estilo.replace("-fx-background-image: url\\('.*'\\);", "");
-
-        //Se añade al fondo la imagen con el tema oscuro
-        fxmlSignUp.setStyle(estiloNuevo + "-fx-background-image: url('/img/fondoPantallaCambiado.jpg');");
-        oscuro = true;
+    public void aplicarFondo() {
+        fxmlSignUp.setStyle("-fx-background-image: url('" + mainApp.getFondoActual() + "');");
     }
 
-    // Método para cambiar el fondo de pantalla a la imagen de San Francisco
-    public void cambiarFondoSanFranciso(ActionEvent event) {
-        //Se obtiene el estilo del fondo.
-        String estilo = fxmlSignUp.getStyle();
+    @FXML
+    private void cambiarFondoParis(ActionEvent event) {
+        mainApp.cambiarFondo();
+        aplicarFondo();
+    }
 
-        //Se quita la imagen del fondo.
-        String estiloNuevo = estilo.replace("-fx-background-image: url\\('.*'\\);", "");
-
-        //Se añade al fondo la imagen de San Francisco
-        fxmlSignUp.setStyle(estiloNuevo + "-fx-background-image: url('/img/fondoPantalla1.png');");
-        oscuro = true;
+    @FXML
+    private void cambiarFondoSanFrancisco(ActionEvent event) {
+        mainApp.cambiarFondo();
+        aplicarFondo();
     }
 
     // Método para manejar la acción del botón de cerrar
@@ -174,7 +164,7 @@ public class FXMLSignUpController {
 
         ContextMenu menu = new ContextMenu();
         MenuItem item1 = new MenuItem("Cambiar fondo de pantalla a San Francisco.");
-        item1.setOnAction(this::cambiarFondoSanFranciso);
+        item1.setOnAction(this::cambiarFondoSanFrancisco);
         MenuItem item2 = new MenuItem("Cambiar fondo de pantalla a Paris.");
         item2.setOnAction(this::cambiarFondoParis);
         menu.getItems().addAll(item1, item2);
