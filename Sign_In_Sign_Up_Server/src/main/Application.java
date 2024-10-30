@@ -13,6 +13,7 @@ public class Application {
     private static volatile boolean isRunning = true;
 
     public static void main(String[] args) throws SQLException {
+        //Crear pool en el dao no en main
         Pool connectionPool = new Pool(3);
         Signable sign = null;
         ServerSocket serverSocket = null;

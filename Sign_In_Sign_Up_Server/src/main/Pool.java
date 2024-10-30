@@ -14,7 +14,7 @@ public class Pool {
     private final Queue<Connection> availableConnections;
     private final int MAX_CONNECTIONS;
     // Parámetros de conexión a la base de datos
-    private final String jdbcUrl = "jdbc:postgresql://192.168.21.61:5432/DaniBD"; 
+    private final String jdbcUrl = "jdbc:postgresql://192.168.21.92:5432/DaniBD"; 
     private final String usernameDB = "odoo";
     private final String passwordDB = "abcd*1234";
 
@@ -30,7 +30,7 @@ public class Pool {
 
     // Método para crear una nueva conexión JDBC
     private Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:postgresql://192.168.145.139:5432/asier", "odoo", "abcd*1234");
+        return DriverManager.getConnection("jdbc:postgresql://192.168.21.92:5432/GuilleDB", "odoo", "abcd*1234");
     }
 
     // Método sincronizado para obtener una conexión del pool

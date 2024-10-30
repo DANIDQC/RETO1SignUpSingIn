@@ -4,12 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import main.Pool;
-import main.Signable;
-import main.User;
+
 
 public class Worker implements Runnable {
     private Socket clientSocket;
