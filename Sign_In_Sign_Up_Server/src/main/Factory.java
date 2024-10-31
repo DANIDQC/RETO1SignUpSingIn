@@ -8,26 +8,18 @@ package main;
 import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import libreria.Signable;
 
 /**
  *
  * @author 2dam
  */
 public class Factory {
-    public static Signable sign;
-    
-    public static User action(String message, User user, Connection connection){
-        if (message.equals("SignIn")){
-            try {
-                return sign.signIn(user, connection);
-            } catch (Exception ex) {
-                message = "loginError";
-            }
-        } else if (message.equals("SignUp")){
-            return sign.signUp(user, connection);
-        } else{
-            message = "ActionError";
-        }
-        return user;
+
+    private static final Pool connectionPool = new Pool();
+
+    // Método factory que crea y devuelve una instancia de Signable
+    public static Signable createSignable() {
+        return new DAO(connectionPool);
     }
 }

@@ -22,14 +22,16 @@ public class DAO implements Signable {
     private final String OK_USER = "SELECT login FROM res_user WHERE login = ?";
     private final String SIGN_PARTNER = "INSERT INTO res_partner (company_id, name, street, city, zip) values (1, ?, ?, ?, ?)";
     private final String ID_PARTNER = "SELECT MAX(id) FROM res_partner";
-    private final String SIGN_UP = "INSERT INTO res_users (company_id, login, password, active, partner_id) values (1, ?, ?, ?, ?)";
+    private final String SIGN_UP = "INSERT INTO res_users (company_id, login, password, active, partner_id, notification_type) values (1, ?, ?, ?, ?, 'email')";
 
     public DAO(Pool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
     @Override
-    public User signIn(User user, Connection connection) throws Exception {
+    public User signIn(User user) throws Exception {
+        Connection connection = null;
+
         try {
             // Obtener la conexión del pool
             connection = connectionPool.getConnection();
@@ -51,23 +53,20 @@ public class DAO implements Signable {
                     user.setNombre(rs.getString("name"));
                 }
             }
-        } catch (SQLException | InterruptedException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            // Liberar la conexión
             if (connection != null) {
-                try {
-                    connectionPool.releaseConnection(connection);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                connectionPool.releaseConnection(connection);
             }
         }
         return user;
     }
 
     @Override
-    public User signUp(User user, Connection connection) {
+    public User signUp(User user) {
+        Connection connection = null;
+
         try {
             // Obtener la conexión del pool
             connection = connectionPool.getConnection();
@@ -99,11 +98,13 @@ public class DAO implements Signable {
             }
         } catch (SQLException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (connection != null) {
+                connectionPool.releaseConnection(connection);
+            }
+
+            return user;
         }
 
-        return user;
     }
-
 }

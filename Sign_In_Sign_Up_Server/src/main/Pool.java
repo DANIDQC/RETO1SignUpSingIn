@@ -1,64 +1,94 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class Pool {
-    private final Queue<Connection> availableConnections;
-    private final int MAX_CONNECTIONS;
-    // Parámetros de conexión a la base de datos
-    private final String jdbcUrl = "jdbc:postgresql://192.168.21.92:5432/DaniBD"; 
-    private final String usernameDB = "odoo";
-    private final String passwordDB = "abcd*1234";
+    private final String url;
+    private final String user;
+    private final String password;
+    private final List<Connection> availableConnections;
+    private final List<Connection> usedConnections = new ArrayList<>();
+    private final int poolSize;
 
-    public Pool(int maxConnections) throws SQLException {
-        this.availableConnections = new LinkedList<>();
-        this.MAX_CONNECTIONS = maxConnections;
+    // Constructor que inicializa el pool leyendo las propiedades de configuración
+    public Pool() {
+        Properties properties = loadProperties();
+        this.url = properties.getProperty("db.url");
+        this.user = properties.getProperty("db.username");
+        this.password = properties.getProperty("db.password");
+        this.poolSize = Integer.parseInt(properties.getProperty("db.pool.size", "10"));
+        this.availableConnections = new ArrayList<>(poolSize);
 
-        // Inicializar el pool de conexiones con conexiones JDBC
-        for (int i = 0; i < MAX_CONNECTIONS; i++) {
-            availableConnections.offer(createConnection());
+        // Crear el pool inicial de conexiones
+        for (int i = 0; i < poolSize; i++) {
+            availableConnections.add(createConnection());
         }
     }
 
-    // Método para crear una nueva conexión JDBC
-    private Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:postgresql://192.168.21.92:5432/GuilleDB", "odoo", "abcd*1234");
-    }
-
-    // Método sincronizado para obtener una conexión del pool
-    public synchronized Connection getConnection() throws SQLException, InterruptedException {
-        while (availableConnections.isEmpty()) {
-            System.out.println("No hay conexiones disponibles. Esperando...");
-            wait();  // Esperamos hasta que una conexión esté disponible
+    // Cargar propiedades desde el archivo database.properties
+    private Properties loadProperties() {
+        Properties properties = new Properties();
+        try (FileInputStream input = new FileInputStream("database.properties")) {
+            properties.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("No se pudo cargar el archivo de propiedades", e);
         }
-        System.out.println("Obteniendo conexión del pool...");
-        return availableConnections.poll();  // Obtenemos una conexión del pool
+        return properties;
     }
 
-    // Método sincronizado para liberar una conexión y devolverla al pool
-    public synchronized void releaseConnection(Connection connection) throws SQLException {
-        if (connection != null) {
-            availableConnections.offer(connection);  // Devolver la conexión al pool
-            System.out.println("Conexión liberada y añadida al pool.");
-            notifyAll();  // Notificamos a los hilos que están esperando una conexión
+    // Crea una nueva conexión
+    private Connection createConnection() {
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al crear una conexión", e);
         }
     }
 
-    // Método para cerrar todas las conexiones del pool cuando ya no son necesarias
-    public synchronized void closeAllConnections() throws SQLException {
-        while (!availableConnections.isEmpty()) {
-            Connection connection = availableConnections.poll();
-            if (connection != null) {
+    // Método para obtener una conexión del pool
+    public Connection getConnection() {
+        if (availableConnections.isEmpty()) {
+            throw new RuntimeException("No hay conexiones disponibles");
+        }
+
+        Connection connection = availableConnections.remove(availableConnections.size() - 1);
+        usedConnections.add(connection);
+        return connection;
+    }
+
+    // Método para devolver una conexión al pool
+    public void releaseConnection(Connection connection) {
+        usedConnections.remove(connection);
+        availableConnections.add(connection);
+    }
+
+    // Método para cerrar todas las conexiones
+    public void closeAllConnections() {
+        for (Connection connection : availableConnections) {
+            try {
                 connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
+        for (Connection connection : usedConnections) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Tamaño del pool
+    public int getSize() {
+        return availableConnections.size() + usedConnections.size();
     }
 }

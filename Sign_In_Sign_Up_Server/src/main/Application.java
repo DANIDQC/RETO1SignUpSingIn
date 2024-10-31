@@ -1,83 +1,72 @@
 package main;
+
+import hilos.KeyListenerThread;
+import hilos.Worker;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Application {
+    private static final int PORT = 50250;
+    private static final int MAX_THREADS = 10; // Máximo de 10 hilos a la vez
+    private static final Thread[] threadArray = new Thread[MAX_THREADS];
+    private static ServerSocket serverSocket;
 
-    private static final int PUERTO = 50100;
-    private static final List<Thread> workerThreads = new ArrayList<>();
-    private static volatile boolean isRunning = true;
-
-    public static void main(String[] args) throws SQLException {
-        //Crear pool en el dao no en main
-        Pool connectionPool = new Pool(3);
-        Signable sign = null;
-        ServerSocket serverSocket = null;
-
+    public static void main(String[] args) {
         try {
-            serverSocket = new ServerSocket(PUERTO);
-            System.out.println("Servidor escuchando en el puerto " + PUERTO);
+            serverSocket = new ServerSocket(PORT);
+            System.out.println("Servidor iniciado y escuchando en el puerto " + PORT);
 
-            Thread keyboardReaderThread = new Thread(new KeyboardEscListener());
-            keyboardReaderThread.start();
+            // Inicia el hilo para escuchar la tecla ESC y cerrar el servidor
+            Thread keyListenerThread = new Thread(new KeyListenerThread());
+            keyListenerThread.start();
 
-            while (isRunning) {
+            while (true) {
                 Socket clientSocket = serverSocket.accept();
-                Worker worker = new Worker(clientSocket, connectionPool, sign);
-                Thread workerThread = new Thread(worker);
-                workerThreads.add(workerThread);
-                workerThread.start();
-            }
+                System.out.println("Cliente conectado: " + clientSocket.getInetAddress());
 
+                int index = findAvailableSlot();
+                if (index == -1) {
+                    System.out.println("Máximo de conexiones alcanzado. Esperando espacio...");
+                    Thread.sleep(1000); // Espera un momento antes de volver a intentar
+                } else {
+                    // Asigna un nuevo hilo en el espacio disponible
+                    threadArray[index] = new Worker(clientSocket);
+                    threadArray[index].start();
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Método para encontrar el primer espacio disponible en el array
+    private static int findAvailableSlot() {
+        for (int i = 0; i < MAX_THREADS; i++) {
+            if (threadArray[i] == null || !threadArray[i].isAlive()) {
+                return i;
+            }
+        }
+        return -1; // No hay espacios disponibles
+    }
+
+    // Método para cerrar todos los hilos y el servidor
+    public static void closeAllThreads() {
+        try {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+            }
+            for (int i = 0; i < MAX_THREADS; i++) {
+                if (threadArray[i] != null) {
+                    threadArray[i].interrupt(); // Interrumpe cada hilo
+                    threadArray[i] = null; // Limpia la referencia en el array
+                }
+            }
+            System.out.println("Todos los hilos y el servidor han sido cerrados.");
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            connectionPool.closeAllConnections();
-            new Thread(new ThreadTerminator()).start();
-        }
-    }
-
-    static class KeyboardEscListener implements Runnable {
-        @Override
-        public void run() {
-            try {
-                while (true) {
-                    if (System.in.available() > 0) {
-                        int key = System.in.read();
-                        if (key == 27) {
-                            System.out.println("Tecla Esc presionada. Cerrando el servidor y todos los hilos...");
-                            isRunning = false;
-                            break;
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    static class ThreadTerminator implements Runnable {
-        @Override
-        public void run() {
-            for (Thread workerThread : workerThreads) {
-                if (workerThread.isAlive()) {
-                    workerThread.interrupt();
-                }
-            }
-            System.out.println("Todos los hilos de trabajo han sido interrumpidos.");
-            System.exit(0);
         }
     }
 }
+
+
