@@ -16,6 +16,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -44,7 +45,6 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.primaryStage = stage;
-        primaryStage.setMaximized(true); // Para que la ventana inicie maximizada
         mostrarLogin();
     }
 
@@ -56,7 +56,6 @@ public class Main extends Application {
         aplicarFondo(root); // Aplica el fondo actual
 
         Scene scene = new Scene(root);
-        primaryStage.setMaximized(true); // Para que la ventana inicie maximizada
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/logoEquipo.PNG")));
         primaryStage.setTitle("Login");
@@ -73,7 +72,6 @@ public class Main extends Application {
         aplicarFondo(root); // Aplica el fondo actual
 
         Scene scene = new Scene(root);
-        primaryStage.setMaximized(true); // Para que la ventana inicie maximizada
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/logoEquipo.PNG")));
         primaryStage.setTitle("Sign Up");
@@ -91,7 +89,6 @@ public class Main extends Application {
         controller.setUserName(username); // Pasar el nombre del usuario
 
         Scene scene = new Scene(root);
-        primaryStage.setMaximized(true); // Para que la ventana inicie maximizada
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/logoEquipo.PNG")));
         primaryStage.setTitle("Sign Out");

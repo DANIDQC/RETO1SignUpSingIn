@@ -1,0 +1,4 @@
+db.url=jdbc:postgresql://192.168.120.128:5432/andoni
+db.username=odoo
+db.password=abcd*1234
+db.pool.size=10
