@@ -13,7 +13,7 @@ import java.sql.Connection;
  */
 public interface Signable { 
 
-    public User signIn(User user, Connection connection) throws Exception;
+    public User signIn(User user) throws Exception;
 
-    public User signUp(User user, Connection connection);
+    public User signUp(User user) throws Exception;
 }

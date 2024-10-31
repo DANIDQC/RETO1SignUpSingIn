@@ -29,7 +29,9 @@ public class DAO implements Signable {
     }
 
     @Override
-    public User signIn(User user, Connection connection) throws Exception {
+    public User signIn(User user) throws Exception {
+        Connection connection = null;
+
         try {
             // Obtener la conexión del pool
             connection = connectionPool.getConnection();
@@ -51,23 +53,20 @@ public class DAO implements Signable {
                     user.setNombre(rs.getString("name"));
                 }
             }
-        } catch (SQLException | InterruptedException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            // Liberar la conexión
             if (connection != null) {
-                try {
-                    connectionPool.releaseConnection(connection);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                connectionPool.releaseConnection(connection);
             }
         }
         return user;
     }
 
     @Override
-    public User signUp(User user, Connection connection) {
+    public User signUp(User user) {
+        Connection connection = null;
+
         try {
             // Obtener la conexión del pool
             connection = connectionPool.getConnection();
@@ -99,11 +98,13 @@ public class DAO implements Signable {
             }
         } catch (SQLException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (connection != null) {
+                connectionPool.releaseConnection(connection);
+            }
+
+            return user;
         }
 
-        return user;
     }
-
 }
