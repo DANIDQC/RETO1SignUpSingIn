@@ -38,7 +38,7 @@
     <bottom>
         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="btnLogin" mnemonicParsing="false" prefHeight="35.0" prefWidth="112.0" text="LOGIN" style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white;">
+                <Button fx:id="btnLogin" mnemonicParsing="false" prefHeight="35.0" onAction="#iniciarSesion" prefWidth="112.0" text="LOGIN" style="-fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white;">
                     <font>
                         <Font name="System Bold Italic" size="19.0" />
                     </font>

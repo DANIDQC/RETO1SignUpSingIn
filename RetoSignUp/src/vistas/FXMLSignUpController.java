@@ -1,5 +1,6 @@
 package vistas;
 
+import controlador.Cliente;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +21,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import libreria.Stream;
+import libreria.User;
 
 public class FXMLSignUpController {
 
@@ -85,6 +88,31 @@ public class FXMLSignUpController {
         }
         showAlert("Éxito", "¡Registrado!");
 
+
+        User nuevoUsuario = new User();
+        
+        nuevoUsuario.setNombreApellidos(idNombreApellido.getText());
+        nuevoUsuario.setDireccion(idDireccion.getText());
+        nuevoUsuario.setCiudad(idCiudad.getText());
+        nuevoUsuario.setCodigoPostal(Integer.parseInt(idCodigoPostal.getText()));
+        nuevoUsuario.setLogin(email);
+        nuevoUsuario.setPassword(idContrasena.getText());
+
+        // Crear el objeto Stream (asegúrate de que esta clase existe y puede manejar un User)
+        Stream stream = new Stream();
+        stream.setUsuario(nuevoUsuario);
+        stream.setMensaje("SignUp");
+
+        // Mostrar alerta de éxito
+
+        // Llamar al método signUp del Cliente
+        Cliente cliente = new Cliente();
+        try {
+            cliente.signUp(stream);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo completar el registro. Inténtalo de nuevo.");
+        }
     }
 
     public void aplicarFondo() {
