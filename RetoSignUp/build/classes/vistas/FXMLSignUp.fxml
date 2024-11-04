@@ -74,13 +74,13 @@
     </center>
     <bottom>
         <VBox alignment="CENTER" style="-fx-padding: 20;">
-            <Button fx:id="btnRegistrarse" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="180.0" style="-fx-font-size: 18px; -fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white; -fx-font-weight: bold;" text="Registrarse" />
+            <Button fx:id="btnRegistrarse" mnemonicParsing="false" onAction="#botonRegistrarseExitoso" prefHeight="50.0" prefWidth="180.0" style="-fx-font-size: 18px; -fx-background-color: transparent; -fx-border-color: white; -fx-text-fill: white; -fx-font-weight: bold;" text="Registrarse" />
         </VBox>
     </bottom>
     <top>
         <VBox alignment="TOP_RIGHT" prefHeight="82.0" prefWidth="830.0" BorderPane.alignment="CENTER">
             <children>
-                <Button alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#cerrarApp" prefHeight="55.0" prefWidth="61.0" style="-fx-background-color: transparent; -fx-border-color: trasnparent;">
+                <Button alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#volverInicioSesion" prefHeight="55.0" prefWidth="61.0" style="-fx-background-color: transparent; -fx-border-color: trasnparent;">
                     <graphic>
                         <ImageView fx:id="btnSalirApp" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                             <image>

@@ -8,17 +8,13 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="RetoSignUp.jar" size="3211991" download="eager" />
-    <jar href="lib\Library.jar" size="7709" download="eager" />
-    <jar href="lib\hamcrest-junit-2.0.0.0.jar" size="14347" download="eager" />
-    <jar href="lib\java-hamcrest-2.0.0.0.jar" size="112929" download="eager" />
-    <jar href="lib\junit-4.12.jar" size="316791" download="eager" />
-    <jar href="lib\testfx-core-4.0.13-alpha.jar" size="202932" download="eager" />
-    <jar href="lib\testfx-junit-4.0.13-alpha.jar" size="9871" download="eager" />
+    <jar href="RetoSignUp.jar" size="5200112" download="eager" />
+    <jar href="lib\Library.jar" size="7998" download="eager" />
+    <jar href="lib\postgresql-42.7.4.jar" size="1086687" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="RetoSignUp" >
     <param name="requiredFXVersion" value="8.0+"/>
   </applet-desc>
-  <jfx:javafx-desc  width="800" height="600" main-class="vistas.MainLogin"  name="RetoSignUp" />
+  <jfx:javafx-desc  width="800" height="600" main-class="vistas.Main"  name="RetoSignUp" />
   <update check="always"/>
 </jnlp>

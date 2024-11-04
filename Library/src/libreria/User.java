@@ -68,6 +68,15 @@ public class User implements Serializable{
         this.ciudad = ciudad;
         this.codigoPostal = codigoPostal;
     }
+    
+    public User(String login, String password){
+        this.login = login;
+        this.password = password;
+    }
+
+    public User() {
+       
+    }
 
     /**
      * Obtiene el nombre de usuario o login.

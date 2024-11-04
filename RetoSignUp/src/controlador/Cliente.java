@@ -13,7 +13,8 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import libreria.Signable;
 import libreria.Stream;
-import vistas.FXMLLoginController;
+import libreria.User;
+import vistas.FXMLSignInController;
 import vistas.FXMLSignUpController;
 
 /**
@@ -26,10 +27,9 @@ public class Cliente implements Signable{
         ObjectOutputStream salida = null;
         
         String IP = ResourceBundle.getBundle("modelo.conexionInfo").getString("IP");
-        int PUERTO = Integer.getInteger(ResourceBundle.getBundle("modelo.conexionInfo").getString("PUERTO"));
+        int PUERTO = Integer.parseInt(ResourceBundle.getBundle("modelo.conexionInfo").getString("PUERTO"));
     
 
-    @Override
     public void signUp(Stream stream) throws Exception {
         try {
             socket = new Socket(IP, PUERTO);
@@ -66,7 +66,6 @@ public class Cliente implements Signable{
         }
     }
 
-    @Override
     public void signIn(Stream stream) throws Exception {
         try {
             socket = new Socket(IP, PUERTO);
@@ -78,7 +77,7 @@ public class Cliente implements Signable{
             
             String mensaje = (String) entrada.readObject();
            
-            FXMLLoginController.actualizarInterfazConMensaje(mensaje);
+            FXMLSignInController.actualizarInterfazConMensaje(mensaje);
             
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
@@ -100,6 +99,16 @@ public class Cliente implements Signable{
             }
             System.out.println("Fin cliente");
         }
+    }
+
+    @Override
+    public Stream signUp(User user) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Stream signIn(User user) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
 
