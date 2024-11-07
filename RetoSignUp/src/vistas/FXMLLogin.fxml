@@ -49,7 +49,7 @@
     <center>
         <VBox alignment="CENTER" prefHeight="363.0" prefWidth="485.0" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
-                <Label style="-fx-text-fill: white;" text="Usuario">
+                <Label style="-fx-text-fill: white;" text="Email">
                     <opaqueInsets>
                         <Insets />
                     </opaqueInsets>

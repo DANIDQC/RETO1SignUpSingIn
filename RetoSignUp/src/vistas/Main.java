@@ -23,8 +23,10 @@ import javafx.stage.WindowEvent;
 public class Main extends Application {
 
     private Stage primaryStage;
-    private boolean fondoPantalla = true;  // Estado global del fondo (true o false)
-    private String fondoActual = "/img/fondoPantalla1.png"; // Imagen inicial del fondo
+    // Estado de fondo de pantalla true
+    private boolean fondoPantalla = true;
+    // Imagen inicial del fondo
+    private String fondoActual = "/img/fondoPantalla1.png";
 
     public boolean isFondoPantalla() {
         return fondoPantalla;
@@ -83,10 +85,10 @@ public class Main extends Application {
     public void mostrarSignOut(String username) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLBienvenido.fxml"));
         Parent root = loader.load();
-
-        // Obtenemos el controlador de la vista de bienvenida
         FXMLSignOutController controller = loader.getController();
+        controller.setMainApp(this);
         controller.setUserName(username); // Pasar el nombre del usuario
+        aplicarFondo(root);
 
         Scene scene = new Scene(root);
 

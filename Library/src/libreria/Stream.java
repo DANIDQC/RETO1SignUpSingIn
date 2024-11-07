@@ -35,7 +35,7 @@ public class Stream implements Serializable{
     }
 
     public Stream() {
-       
+        
     }
 
     /**

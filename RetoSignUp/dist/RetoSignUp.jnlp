@@ -8,9 +8,23 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="RetoSignUp.jar" size="5200112" download="eager" />
-    <jar href="lib\Library.jar" size="7998" download="eager" />
-    <jar href="lib\postgresql-42.7.4.jar" size="1086687" download="eager" />
+    <jar href="RetoSignUp.jar" size="8985292" download="eager" />
+    <jar href="lib\Library.jar" size="8495" download="eager" />
+    <jar href="lib\hamcrest-junit-2.0.0.0-javadoc.jar" size="65207" download="eager" />
+    <jar href="lib\hamcrest-junit-2.0.0.0-sources.jar" size="9053" download="eager" />
+    <jar href="lib\hamcrest-junit-2.0.0.0.jar" size="14347" download="eager" />
+    <jar href="lib\java-hamcrest-2.0.0.0-javadoc.jar" size="352320" download="eager" />
+    <jar href="lib\java-hamcrest-2.0.0.0-sources.jar" size="76107" download="eager" />
+    <jar href="lib\java-hamcrest-2.0.0.0.jar" size="112929" download="eager" />
+    <jar href="lib\junit-4.12-javadoc.jar" size="937942" download="eager" />
+    <jar href="lib\junit-4.12-sources.jar" size="200355" download="eager" />
+    <jar href="lib\junit-4.12.jar" size="314932" download="eager" />
+    <jar href="lib\testfx-core-4.0.13-alpha-javadoc.jar" size="1219646" download="eager" />
+    <jar href="lib\testfx-core-4.0.13-alpha-sources.jar" size="171888" download="eager" />
+    <jar href="lib\testfx-core-4.0.13-alpha.jar" size="202932" download="eager" />
+    <jar href="lib\testfx-junit-4.0.13-alpha-javadoc.jar" size="398152" download="eager" />
+    <jar href="lib\testfx-junit-4.0.13-alpha-sources.jar" size="6532" download="eager" />
+    <jar href="lib\testfx-junit-4.0.13-alpha.jar" size="9871" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="RetoSignUp" >
     <param name="requiredFXVersion" value="8.0+"/>

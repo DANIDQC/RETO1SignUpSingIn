@@ -4,10 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/2dam/Desktop/PROYECTO/RetoSignUp/src/controlador/Cliente.java</file>
-            <file>file:/C:/Users/2dam/Desktop/PROYECTO/RetoSignUp/src/vistas/Main.java</file>
             <file>file:/C:/Users/2dam/Desktop/PROYECTO/RetoSignUp/src/controlador/SignableFactory.java</file>
             <file>file:/C:/Users/2dam/Desktop/PROYECTO/RetoSignUp/src/vistas/FXMLSignUpController.java</file>
+            <file>file:/C:/Users/2dam/Desktop/PROYECTO/RetoSignUp/src/vistas/FXMLSignInController.java</file>
             <file>file:/C:/Users/2dam/Desktop/PROYECTO/RetoSignUp/src/vistas/FXMLSignOutController.java</file>
+            <file>file:/C:/Users/2dam/Desktop/PROYECTO/RetoSignUp/test/test/TestFx.java</file>
+            <file>file:/C:/Users/2dam/Desktop/PROYECTO/RetoSignUp/src/vistas/FXMLBienvenido.fxml</file>
         </group>
     </open-files>
 </project-private>

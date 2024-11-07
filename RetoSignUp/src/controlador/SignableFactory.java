@@ -9,7 +9,7 @@ import libreria.Signable;
 
 /**
  *
- * @author Guillermo
+ * @author Guillermo Flecha
  */
 public class SignableFactory {
     

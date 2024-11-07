@@ -5,6 +5,7 @@
  */
 package vistas;
 
+import controlador.SignableFactory;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -28,6 +29,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import libreria.Request;
+import libreria.Signable;
+import libreria.Stream;
+import libreria.User;
 
 /**
  * Controlador de la ventana de inicio de sesión para la aplicación.
@@ -75,7 +80,7 @@ public class FXMLSignInController implements Initializable {
 
     private Main mainApp;
 
-     public void setMainApp(Main mainApp) {
+    public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
         aplicarFondo();  // Aplica el fondo al inicializar la ventana
     }
@@ -108,8 +113,6 @@ public class FXMLSignInController implements Initializable {
         }
     }
 
-
-
     // Método que se ejecuta cuando el checkbox es seleccionado/deseleccionado
     @FXML
     private void mostrarContraseña() {
@@ -126,42 +129,68 @@ public class FXMLSignInController implements Initializable {
 
     @FXML
     public void iniciarSesion(ActionEvent event) {
-        String nombreUsuario = "NombreDelUsuario"; // Aquí obtendrás el nombre del usuario logueado
+        // Obtener email y contraseña de los campos de texto
+        String email = txtFieldUsuario.getText();
+        String password = txtPasswordField.getText();
 
-        // Iniciar la ventana de bienvenida
-        Stage stage = new Stage();
+        // Validar que los campos no estén vacíos
+        if (email.isEmpty() || password.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error de Inicio de Sesión");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, rellena todos los campos.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Crear el usuario con la información ingresada
+        User user = new User(email, password);
+
+        // Obtener instancia de Signable para autenticación
+        Signable signable = SignableFactory.getSignable();
+
+        // Intentar iniciar sesión
         try {
-            mainApp.mostrarSignOut(txtFieldUsuario.getText());
-        } catch (Exception ex) {
-            Logger.getLogger(FXMLSignInController.class.getName()).log(Level.SEVERE, null, ex);
+            Stream stream = signable.signIn(user);
+
+            if (stream.getMensaje().equals(Request.OK_SINGIN)) {
+                // Si el inicio de sesión es exitoso, abrir ventana de bienvenida
+                mainApp.mostrarSignOut(email);  // Llama al método que muestra la ventana de bienvenida
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de Inicio de Sesión");
+                alert.setHeaderText(null);
+                alert.setContentText("Credenciales incorrectas, por favor intente nuevamente.");
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            Logger.getLogger(FXMLSignInController.class.getName()).log(Level.SEVERE, null, e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error de Conexión");
+            alert.setHeaderText(null);
+            alert.setContentText("No se pudo conectar con el servidor.");
+            alert.showAndWait();
         }
     }
 
     @FXML
     private void ventanaRegistrarse(ActionEvent event) {
-        // Iniciar la ventana de bienvenida
-        Stage stage = new Stage();
-        try {
-            mainApp.mostrarSignUp();
-        } catch (Exception ex) {
-            Logger.getLogger(FXMLSignInController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+        // Crear una alerta de confirmación
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación de Registro");
+        alert.setHeaderText(null);
+        alert.setContentText("¿Seguro que deseas registrar un usuario nuevo?");
 
-    public static void actualizarInterfazConMensaje(String mensaje) {
-        switch (mensaje) {
-            case "OK_SIGNIN":
-                //Vaya a la ventana de SignIn
-                break;
-            case "EXCEPCION_INTERNA":
-                //Alert de expcepcion interna
-                break;
-            case "LOG_IN_EXCEPCION":
-                //Alert Excepción por usuario existente
-                break;
-            case "EXCEPCION_EN_CONEXIONES":
-                //Alert Error en las conexiones del sistema
-                break;
+        // Esperar la respuesta del usuario
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Si el usuario confirma, procede a mostrar la ventana de registro
+            Stage stage = new Stage();
+            try {
+                mainApp.mostrarSignUp();
+            } catch (Exception ex) {
+                Logger.getLogger(FXMLSignInController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }
