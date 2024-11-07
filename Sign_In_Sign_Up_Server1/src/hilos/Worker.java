@@ -23,28 +23,26 @@ public class Worker extends Thread {
         this.clientSocket = clientSocket;
         this.in = in;
         this.out = out;
+        this.start();
     }
 
     @Override
     public void run() {
         try {
-            System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                System.out.println("He entrado en el Threadddddddddddddddddddddddddddddddddddddddddddddddddddd");
                 Stream stream = (Stream) in.readObject();
-                System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                 String message = stream.getMensaje().toString();
                 User user = (User) stream.getUsuario();
-                System.out.println("ccccccccccccccccccccccccccccccccccccccccccccccccccccc");
                 Signable signable = Factory.createSignable();
                 try{
-                if ("SignIn".equalsIgnoreCase(message)) {
-                    signable.signIn(user);
-                } else if ("SignUp".equalsIgnoreCase(message)) {
-                    signable.signUp(user);
+                if ("SIGN_IN_SOLICITUD".equalsIgnoreCase(message)) {
+                    stream = signable.signIn(user);
+                } else if ("SIGN_UP_SOLICITUD".equalsIgnoreCase(message)) {
+                    stream = signable.signUp(user);
                 }
                 } catch (Exception ex) {
                     Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
                 out.writeObject(stream);
             
 

@@ -31,22 +31,17 @@ public class Application {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Cliente conectado: " + clientSocket.getInetAddress());
-                System.out.println("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
                 entrada = clientSocket.getInputStream();
                 in = new ObjectInputStream(entrada);
-                System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
                 out = new ObjectOutputStream(clientSocket.getOutputStream());
-                System.out.println("gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
                 int index = findAvailableSlot();
                 if (index == -1) {
                     System.out.println("Máximo de conexiones alcanzado. Esperando espacio...");
                     Thread.sleep(1000); // Espera un momento antes de volver a intentar
                 } else {
                     // Asigna un nuevo hilo en el espacio disponible        
-                    System.out.println("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
                     threadArray[index] = new Worker(clientSocket, in, out);
-                    threadArray[index].start();
-                    System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                    //threadArray[index].start();
                 }
             }
         } catch (IOException | InterruptedException e) {

@@ -5,6 +5,8 @@
  */
 package controlador;
 
+import excepciones.ExcepcionConexionesError;
+import excepciones.ExcepcionInternaServidorError;
 import java.io.IOException;
 import java.net.Socket;
 import java.io.ObjectInputStream;
@@ -37,39 +39,46 @@ public class Cliente implements Signable {
     @Override
     public Stream signUp(User user) throws Exception {
         Stream stream = null;
+        Socket socket = null;
+        ObjectOutputStream salida = null;
+        ObjectInputStream entrada = null;
+
         try {
             socket = new Socket(IP, PUERTO);
-            System.out.println("Esperando que el servidor envíe algo....");
+            System.out.println("Conectado al servidor, enviando solicitud de registro...");
+
             salida = new ObjectOutputStream(socket.getOutputStream());
             entrada = new ObjectInputStream(socket.getInputStream());
 
             stream = new Stream(user, Request.SIGN_UP_SOLICITUD);
             salida.writeObject(stream);
 
+            // Esperar la respuesta del servidor
             stream = (Stream) entrada.readObject();
-            String message = stream.getMensaje().toString();
-            FXMLSignUpController.actualizarInterfazConMensaje(message);
+            return stream; // Devuelve la respuesta del servidor
 
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error de conexión: " + e.getMessage());
+            return new Stream (user, Request.EXCEPCION_EN_CONEXIONES); 
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error inesperado: " + e.getMessage());
+            return new Stream (user, Request.EXCEPCION_EN_CONEXIONES); 
         } finally {
+            // Cerrar los recursos en el bloque finally
             try {
-                if (socket != null) {
-                    socket.close();
-                }
                 if (entrada != null) {
                     entrada.close();
                 }
                 if (salida != null) {
                     salida.close();
                 }
+                if (socket != null) {
+                    socket.close();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Error cerrando recursos: " + e.getMessage());
             }
             System.out.println("Fin cliente");
-            return stream;
         }
     }
 
@@ -87,8 +96,6 @@ public class Cliente implements Signable {
             salida.writeObject(stream);
 
             stream = (Stream) entrada.readObject();
-
-            FXMLSignInController.actualizarInterfazConMensaje(stream.getMensaje().toString());
 
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());

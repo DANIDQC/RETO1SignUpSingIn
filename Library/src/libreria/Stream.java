@@ -34,6 +34,10 @@ public class Stream implements Serializable{
         this.mensaje = mensaje;
     }
 
+    public Stream() {
+        
+    }
+
     /**
      * Obtiene el usuario asociado a este flujo de datos.
      *

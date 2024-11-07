@@ -1,10 +1,11 @@
 package vistas;
 
+import controlador.Cliente;
+import controlador.SignableFactory;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -20,6 +21,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import libreria.Request;
+import libreria.Signable;
+import libreria.Stream;
+import libreria.User;
 
 public class FXMLSignUpController {
 
@@ -63,7 +68,7 @@ public class FXMLSignUpController {
     // Método que se ejecuta cuando se presiona el botón de registro
     @FXML
     private void botonRegistrarseExitoso(ActionEvent event) {
-
+        // Verificar que todos los campos obligatorios están llenos
         if (idNombreApellido.getText().trim().isEmpty() || idDireccion.getText().trim().isEmpty()
                 || idCiudad.getText().trim().isEmpty() || idCodigoPostal.getText().trim().isEmpty()
                 || idCorreoElectronico.getText().trim().isEmpty() || idContrasena.getText().trim().isEmpty()
@@ -72,10 +77,30 @@ public class FXMLSignUpController {
             return;
         }
 
-        if (!idContrasena.getText().trim().equals(idRepetirContrasena.getText().trim()) || !idContrasenaTextField.getText().trim().equals(idRepetirContrasenaTextField.getText().trim())) {
+        // Variables para almacenar las contraseñas que se usarán en la verificación
+        String password;
+        String repeatPassword;
+
+        // Comprobar cuál de los campos de contraseña está visible y tomar su valor
+        if (idMostrarContrasena.isSelected()) {
+            password = idContrasenaTextField.getText();
+        } else {
+            password = idContrasena.getText();
+        }
+
+        if (idMostrarRepetirContrasena.isSelected()) {
+            repeatPassword = idRepetirContrasenaTextField.getText();
+        } else {
+            repeatPassword = idRepetirContrasena.getText();
+        }
+
+        // Verificar si las contraseñas coinciden
+        if (!password.equals(repeatPassword)) {
             showAlert("Error", "Las contraseñas no coinciden.");
             return;
         }
+
+        // Validación de formato del correo electrónico
         String email = idCorreoElectronico.getText();
         String emailRegex = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
 
@@ -83,7 +108,35 @@ public class FXMLSignUpController {
             showAlert("Error", "Gmail no válido. Asegúrate de usar una dirección de correo de Gmail.");
             return;
         }
-        showAlert("Éxito", "¡Registrado!");
+
+        // Crear el objeto User con los datos ingresados
+        User user = new User();
+        user.setNombreApellidos(idNombreApellido.getText());
+        user.setDireccion(idDireccion.getText());
+        user.setCiudad(idCiudad.getText());
+        user.setCodigoPostal(Integer.parseInt(idCodigoPostal.getText()));
+        user.setLogin(email);
+        user.setPassword(password);  // Usamos el password que ya se definió arriba
+
+        Signable signable = SignableFactory.getSignable();
+        Stream stream;
+        try {
+            stream = signable.signUp(user);
+            if (stream.getMensaje().equals(Request.OK_SINGUP)) {
+                showAlert("Éxito", "¡Registrado!");
+                mainApp.mostrarLogin();
+            } else if (stream.getMensaje().equals(Request.USUARIO_EXISTE_EXCEPCION)) {
+                showAlert("ERROR", "El email introducido ya está registrado en la base de datos");
+            } else if (stream.getMensaje().equals(Request.EXCEPCION_EN_CONEXIONES)) {
+                showAlert("ERROR", "Ha ocurrido un error con las conexiones");
+            } else if (stream.getMensaje().equals(Request.EXCEPCION_INTERNA)) {
+                showAlert("ERROR", "Ha ocurrido un error interno desconocido");
+            } else {
+                showAlert("ERROR", "Servidor apagado");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(FXMLSignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -103,7 +156,6 @@ public class FXMLSignUpController {
         aplicarFondo();
     }
 
-    // Método para manejar la acción del botón de cerrar
     // Método para manejar la acción del botón de cerrar
     @FXML
     private void volverInicioSesion(ActionEvent event) {

@@ -193,21 +193,4 @@ public class FXMLSignInController implements Initializable {
             }
         }
     }
-
-    public static void actualizarInterfazConMensaje(String mensaje) {
-        switch (mensaje) {
-            case "OK_SIGNIN":
-                //Vaya a la ventana de SignIn
-                break;
-            case "EXCEPCION_INTERNA":
-                //Alert de expcepcion interna
-                break;
-            case "LOG_IN_EXCEPCION":
-                //Alert Excepción por usuario existente
-                break;
-            case "EXCEPCION_EN_CONEXIONES":
-                //Alert Error en las conexiones del sistema
-                break;
-        }
-    }
 }
