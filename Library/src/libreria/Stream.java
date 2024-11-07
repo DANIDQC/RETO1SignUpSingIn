@@ -22,16 +22,20 @@ public class Stream implements Serializable{
     /**
      * El mensaje asociado a este flujo de datos.
      */
-    private String mensaje;
+    private Request mensaje;
     /**
      * Crea una nueva instancia de {@code Stream} con el usuario y mensaje especificados.
      *
      * @param usuario el usuario asociado al flujo de datos
      * @param mensaje el mensaje asociado al flujo de datos
      */
-    public Stream(User usuario, String mensaje) {
+    public Stream(User usuario, Request mensaje) {
         this.usuario = usuario;
         this.mensaje = mensaje;
+    }
+
+    public Stream() {
+        
     }
 
     /**
@@ -57,7 +61,7 @@ public class Stream implements Serializable{
      *
      * @return el mensaje del flujo de datos
      */
-    public String getMensaje() {
+    public Request getMensaje() {
         return mensaje;
     }
 
@@ -66,7 +70,7 @@ public class Stream implements Serializable{
      *
      * @param mensaje el nuevo mensaje del flujo de datos
      */
-    public void setMensaje(String mensaje) {
+    public void setMensaje(Request mensaje) {
         this.mensaje = mensaje;
     }
 }

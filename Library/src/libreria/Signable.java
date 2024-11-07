@@ -15,19 +15,19 @@ public interface Signable {
      /**
      * Registra un nuevo usuario en el sistema.
      *
-     * @param stream el objeto {@code Stream} que contiene la información del usuario 
+     * @param stream el objeto {@code User} que contiene la información del usuario 
      *               y otros datos necesarios para el registro
      * @throws Exception si ocurre un error durante el proceso de registro
      */
-    public void signUp(Stream stream) throws Exception;
+    public Stream signUp(User user) throws Exception;
 
     /**
      * Inicia sesión de un usuario en el sistema.
      *
-     * @param stream el objeto {@code Stream} que contiene la información del usuario 
+     * @param stream el objeto {@code User} que contiene la información del usuario 
      *               necesaria para la autenticación
      * @throws Exception si ocurre un error durante el proceso de inicio de sesión
      */
-    public void signIn(Stream stream) throws Exception;
+    public Stream signIn(User user) throws Exception;
     
 }

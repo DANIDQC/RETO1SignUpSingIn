@@ -5,6 +5,7 @@
  */
 package vistas;
 
+import controlador.SignableFactory;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -28,58 +29,92 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import libreria.Request;
+import libreria.Signable;
+import libreria.Stream;
+import libreria.User;
 
 /**
- * Controlador de la ventana de inicio de sesión para la aplicación.
- *
- * Esta clase controla la interfaz de la ventana de inicio de sesión,
- * permitiendo que el usuario interactúe con elementos como el campo de
- * contraseña, el botón de cierre de aplicación, y otros botones que redirigen a
- * otras ventanas.
- *
- * Funcionalidades principales: - Inicializar componentes de la ventana de
- * inicio de sesión. - Mostrar u ocultar la contraseña al seleccionar o
- * deseleccionar el checkbox. - Gestionar el cierre de la aplicación con
- * confirmación del usuario. - Mostrar alertas en caso de error en la
- * autenticación. - Redirigir al usuario a la ventana de bienvenida tras un
- * inicio de sesión exitoso. - Redirigir a la ventana de registro de usuario
- * (Sign Up) al seleccionar el botón correspondiente.
- *
- * Dependencias: - JavaFX: Para gestionar los elementos visuales e interacción
- * con la interfaz. - Clase MainBienvenido: Para iniciar la ventana de
- * bienvenida tras el inicio de sesión. - Clase MainSignUp: Para iniciar la
- * ventana de registro de usuario.
- *
- * @author Guillermo Flecha
+ * Controlador para la vista de inicio de sesión de la aplicación. 
+ * Administra el proceso de autenticación de usuarios, incluyendo la 
+ * opción de mostrar u ocultar contraseñas y cambiar el fondo de la interfaz.
  */
 public class FXMLSignInController implements Initializable {
 
+    /**
+     * Etiqueta que muestra el mensaje de bienvenida.
+     */
     @FXML
     private Label label;
+
+    /**
+     * Campo de texto para ingresar el nombre de usuario o email.
+     */
     @FXML
     private TextField txtFieldUsuario;
+
+    /**
+     * Campo de texto de tipo contraseña para ingresar la contraseña.
+     */
     @FXML
     private PasswordField txtPasswordField;
+
+    /**
+     * Campo de texto que permite visualizar la contraseña en texto claro cuando es necesario.
+     */
     @FXML
     private TextField txtFieldContraseña;
+
+    /**
+     * Casilla de verificación para habilitar la visualización de la contraseña en texto claro.
+     */
     @FXML
     private CheckBox chBoxMostrar;
+
+    /**
+     * Botón para cerrar la aplicación.
+     */
     @FXML
     private Button btnSalir;
+
+    /**
+     * Botón para iniciar sesión.
+     */
     @FXML
     private Button btnLogin;
+
+    /**
+     * Contenedor de tipo BorderPane para la vista principal de inicio de sesión.
+     */
     @FXML
     private BorderPane fxmlLogin;
 
+    /**
+     * Bandera que indica si el fondo actual es el predeterminado.
+     */
     private boolean fondo = true;
 
+    /**
+     * Referencia a la clase principal de la aplicación, utilizada para la navegación entre pantallas.
+     */
     private Main mainApp;
 
-     public void setMainApp(Main mainApp) {
+    /**
+     * Establece la referencia a la aplicación principal y aplica el fondo a la interfaz.
+     * 
+     * @param mainApp La aplicación principal que maneja la navegación.
+     */
+    public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
         aplicarFondo();  // Aplica el fondo al inicializar la ventana
     }
 
+    /**
+     * Inicializa la interfaz, configurando un menú contextual para cambiar el fondo.
+     * 
+     * @param url No se usa.
+     * @param rb No se usa.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ContextMenu menu = new ContextMenu();
@@ -91,15 +126,29 @@ public class FXMLSignInController implements Initializable {
         fxmlLogin.setOnMouseClicked(event -> controlMenu(event, menu));
     }
 
+    /**
+     * Aplica el fondo actual a la interfaz de usuario.
+     */
     private void aplicarFondo() {
         fxmlLogin.setStyle("-fx-background-image: url('" + mainApp.getFondoActual() + "');");
     }
 
+    /**
+     * Cambia el fondo de la interfaz de usuario según la opción seleccionada en el menú contextual.
+     * 
+     * @param event Evento que desencadena el cambio de fondo.
+     */
     private void cambiarFondo(ActionEvent event) {
         mainApp.cambiarFondo();
         aplicarFondo();
     }
 
+    /**
+     * Controla el menú contextual, mostrando el menú al hacer clic con el botón derecho.
+     * 
+     * @param event Evento de clic de ratón.
+     * @param menu Menú contextual para cambiar el fondo.
+     */
     private void controlMenu(MouseEvent event, ContextMenu menu) {
         if (event.getButton() == MouseButton.SECONDARY) {
             menu.show(fxmlLogin, event.getScreenX(), event.getScreenY());
@@ -108,9 +157,9 @@ public class FXMLSignInController implements Initializable {
         }
     }
 
-
-
-    // Método que se ejecuta cuando el checkbox es seleccionado/deseleccionado
+    /**
+     * Muestra u oculta la contraseña en texto claro cuando se selecciona la casilla de verificación.
+     */
     @FXML
     private void mostrarContraseña() {
         if (chBoxMostrar.isSelected()) {
@@ -124,44 +173,73 @@ public class FXMLSignInController implements Initializable {
         }
     }
 
+    /**
+     * Maneja el proceso de inicio de sesión, verificando credenciales y mostrando alertas de error en caso de fallo.
+     * 
+     * @param event Evento que desencadena el inicio de sesión.
+     */
     @FXML
     public void iniciarSesion(ActionEvent event) {
-        String nombreUsuario = "NombreDelUsuario"; // Aquí obtendrás el nombre del usuario logueado
+        String email = txtFieldUsuario.getText();
+        String password = txtPasswordField.getText();
 
-        // Iniciar la ventana de bienvenida
-        Stage stage = new Stage();
+        // Validación de campos
+        if (email.isEmpty() || password.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error de Inicio de Sesión");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, rellena todos los campos.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Intento de autenticación
+        User user = new User(email, password);
+        Signable signable = SignableFactory.getSignable();
+
         try {
-            mainApp.mostrarSignOut(txtFieldUsuario.getText());
-        } catch (Exception ex) {
-            Logger.getLogger(FXMLSignInController.class.getName()).log(Level.SEVERE, null, ex);
+            Stream stream = signable.signIn(user);
+
+            if (stream.getMensaje().equals(Request.OK_SINGIN)) {
+                mainApp.mostrarSignOut(email);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de Inicio de Sesión");
+                alert.setHeaderText(null);
+                alert.setContentText("Credenciales incorrectas, por favor intente nuevamente.");
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            Logger.getLogger(FXMLSignInController.class.getName()).log(Level.SEVERE, null, e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error de Conexión");
+            alert.setHeaderText(null);
+            alert.setContentText("No se pudo conectar con el servidor.");
+            alert.showAndWait();
         }
     }
 
+    /**
+     * Muestra una ventana de confirmación para proceder al registro de un nuevo usuario.
+     * Si el usuario confirma, se muestra la ventana de registro.
+     * 
+     * @param event Evento que desencadena la ventana de registro.
+     */
     @FXML
     private void ventanaRegistrarse(ActionEvent event) {
-        // Iniciar la ventana de bienvenida
-        Stage stage = new Stage();
-        try {
-            mainApp.mostrarSignUp();
-        } catch (Exception ex) {
-            Logger.getLogger(FXMLSignInController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación de Registro");
+        alert.setHeaderText(null);
+        alert.setContentText("¿Seguro que deseas registrar un usuario nuevo?");
 
-    public static void actualizarInterfazConMensaje(String mensaje) {
-        switch (mensaje) {
-            case "OK_SIGNIN":
-                //Vaya a la ventana de SignIn
-                break;
-            case "EXCEPCION_INTERNA":
-                //Alert de expcepcion interna
-                break;
-            case "LOG_IN_EXCEPCION":
-                //Alert Excepción por usuario existente
-                break;
-            case "EXCEPCION_EN_CONEXIONES":
-                //Alert Error en las conexiones del sistema
-                break;
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Stage stage = new Stage();
+            try {
+                mainApp.mostrarSignUp();
+            } catch (Exception ex) {
+                Logger.getLogger(FXMLSignInController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }
