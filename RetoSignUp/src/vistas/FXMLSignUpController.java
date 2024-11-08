@@ -26,49 +26,133 @@ import libreria.Signable;
 import libreria.Stream;
 import libreria.User;
 
+/**
+ * Controlador de la interfaz de usuario para la pantalla de registro (SignUp).
+ * Esta clase maneja la interacción con el usuario en el proceso de registro de
+ * nuevos usuarios. Incluye la validación de entradas, el manejo de eventos de
+ * la interfaz de usuario y la comunicación con el servidor para registrar un
+ * nuevo usuario.
+ *
+ * @author Guillermo Flecha
+ */
 public class FXMLSignUpController {
 
+    // Atributos de la interfaz gráfica (FXML)
+    /**
+     * Campo de texto donde el usuario ingresa su nombre y apellido.
+     */
     @FXML
     private TextField idNombreApellido;
+
+    /**
+     * Campo de texto donde el usuario ingresa su dirección.
+     */
     @FXML
     private TextField idDireccion;
+
+    /**
+     * Campo de texto donde el usuario ingresa la ciudad de residencia.
+     */
     @FXML
     private TextField idCiudad;
+
+    /**
+     * Campo de texto donde el usuario ingresa su código postal.
+     */
     @FXML
     private TextField idCodigoPostal;
+
+    /**
+     * Campo de texto donde el usuario ingresa su correo electrónico.
+     */
     @FXML
     private TextField idCorreoElectronico;
+
+    /**
+     * Campo de texto donde el usuario ingresa su contraseña.
+     */
     @FXML
     private PasswordField idContrasena;
+
+    /**
+     * Campo de texto donde el usuario repite su contraseña para confirmar.
+     */
     @FXML
     private PasswordField idRepetirContrasena;
+
+    /**
+     * Casilla de verificación que permite al usuario mostrar u ocultar la
+     * contraseña.
+     */
     @FXML
     private CheckBox idMostrarContrasena;
+
+    /**
+     * Casilla de verificación que permite al usuario mostrar u ocultar la
+     * repetición de la contraseña.
+     */
     @FXML
     private CheckBox idMostrarRepetirContrasena;
+
+    /**
+     * Botón de registro que el usuario presiona para completar el proceso de
+     * registro.
+     */
     @FXML
     private Button btnRegistrarse;
+
+    /**
+     * Campo de texto visible cuando el usuario elige mostrar la repetición de
+     * la contraseña.
+     */
     @FXML
     private TextField idRepetirContrasenaTextField;
+
+    /**
+     * Campo de texto visible cuando el usuario elige mostrar la contraseña.
+     */
     @FXML
     private TextField idContrasenaTextField;
+
+    /**
+     * Casilla de verificación que indica si el usuario está activo.
+     */
     @FXML
     private CheckBox idActivo;
+
+    /**
+     * Contenedor principal de la pantalla de registro, que maneja el diseño de
+     * la interfaz.
+     */
     @FXML
     private BorderPane fxmlSignUp;
-    @FXML
-    private boolean oscuro;
 
+    /**
+     * Instancia de la clase principal de la aplicación, utilizada para manejar
+     * la navegación entre pantallas.
+     */
     private Main mainApp;
 
+    /**
+     * Asigna la aplicación principal al controlador.
+     *
+     * @param mainApp La instancia de la clase principal de la aplicación.
+     */
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
     }
 
-    // Método que se ejecuta cuando se presiona el botón de registro
+    /**
+     * Método que se ejecuta cuando el usuario presiona el botón de registro.
+     * Realiza varias validaciones sobre los campos de entrada y, si todo es
+     * correcto, intenta registrar al nuevo usuario mediante la interacción con
+     * el servidor.
+     *
+     * @param event El evento generado por la acción de presionar el botón.
+     */
     @FXML
     private void botonRegistrarseExitoso(ActionEvent event) {
-        // Verificar que todos los campos obligatorios están llenos
+        // Validación de campos obligatorios
         if (idNombreApellido.getText().trim().isEmpty() || idDireccion.getText().trim().isEmpty()
                 || idCiudad.getText().trim().isEmpty() || idCodigoPostal.getText().trim().isEmpty()
                 || idCorreoElectronico.getText().trim().isEmpty() || idContrasena.getText().trim().isEmpty()
@@ -77,11 +161,10 @@ public class FXMLSignUpController {
             return;
         }
 
-        // Variables para almacenar las contraseñas que se usarán en la verificación
+        // Verificación de las contraseñas
         String password;
         String repeatPassword;
 
-        // Comprobar cuál de los campos de contraseña está visible y tomar su valor
         if (idMostrarContrasena.isSelected()) {
             password = idContrasenaTextField.getText();
         } else {
@@ -100,7 +183,7 @@ public class FXMLSignUpController {
             return;
         }
 
-        // Validación de formato del correo electrónico
+        // Validación de correo electrónico
         String email = idCorreoElectronico.getText();
         String emailRegex = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
 
@@ -116,53 +199,69 @@ public class FXMLSignUpController {
         user.setCiudad(idCiudad.getText());
         user.setCodigoPostal(Integer.parseInt(idCodigoPostal.getText()));
         user.setLogin(email);
-        user.setPassword(password);  // Usamos el password que ya se definió arriba
+        user.setPassword(password);
 
+        // Interactuar con el servidor para registrar al usuario
         Signable signable = SignableFactory.getSignable();
         Stream stream;
         try {
             stream = signable.signUp(user);
-            switch (stream.getMensaje()) {
-                case OK_SINGUP:
-                    showAlert("Éxito", "¡Registrado!");
-                    mainApp.mostrarLogin();
-                    break;
-                case USUARIO_EXISTE_EXCEPCION:
-                    showAlert("ERROR", "El email introducido ya está registrado en la base de datos");
-                    break;
-                case EXCEPCION_EN_CONEXIONES:
-                    showAlert("ERROR", "Ha ocurrido un error con las conexiones");
-                    break;
-                case EXCEPCION_INTERNA:
-                    showAlert("ERROR", "Ha ocurrido un error interno desconocido");
-                    break;
-                default:
-                    showAlert("ERROR", "Servidor Apagado");
-                    break;
+            // Dependiendo de la respuesta del servidor, mostrar el resultado correspondiente
+            if (stream.getMensaje().equals(Request.OK_SINGUP)) {
+                showAlert("Éxito", "¡Registrado!");
+                mainApp.mostrarLogin();
+            } else if (stream.getMensaje().equals(Request.USUARIO_EXISTE_EXCEPCION)) {
+                showAlert("ERROR", "El email introducido ya está registrado en la base de datos");
+            } else if (stream.getMensaje().equals(Request.EXCEPCION_EN_CONEXIONES)) {
+                showAlert("ERROR", "Ha ocurrido un error con las conexiones");
+            } else if (stream.getMensaje().equals(Request.EXCEPCION_INTERNA)) {
+                showAlert("ERROR", "Ha ocurrido un error interno desconocido");
+            } else {
+                showAlert("ERROR", "Servidor apagado");
             }
         } catch (Exception ex) {
             Logger.getLogger(FXMLSignUpController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
+    /**
+     * Método que aplica el fondo de pantalla actual.
+     */
     public void aplicarFondo() {
         fxmlSignUp.setStyle("-fx-background-image: url('" + mainApp.getFondoActual() + "');");
     }
 
+    /**
+     * Método para cambiar el fondo de la interfaz a una imagen de París.
+     *
+     * @param event El evento generado por la acción de cambiar el fondo.
+     */
     @FXML
     private void cambiarFondoParis(ActionEvent event) {
         mainApp.cambiarFondo();
         aplicarFondo();
     }
 
+    /**
+     * Método para cambiar el fondo de la interfaz a una imagen de San
+     * Francisco.
+     *
+     * @param event El evento generado por la acción de cambiar el fondo.
+     */
     @FXML
     private void cambiarFondoSanFrancisco(ActionEvent event) {
         mainApp.cambiarFondo();
         aplicarFondo();
     }
 
-    // Método para manejar la acción del botón de cerrar
+    /**
+     * Método que maneja la acción de volver a la ventana de inicio de sesión.
+     * Muestra una alerta de confirmación antes de permitir al usuario salir de
+     * la pantalla de registro.
+     *
+     * @param event El evento generado por la acción de presionar el botón de
+     * volver.
+     */
     @FXML
     private void volverInicioSesion(ActionEvent event) {
         // Crear una alerta de confirmación
@@ -174,21 +273,24 @@ public class FXMLSignUpController {
         // Mostrar la alerta y esperar la respuesta del usuario
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Si el usuario confirma, llama al método para mostrar la ventana de inicio de sesión
+            // Si el usuario confirma, mostrar la ventana de inicio de sesión
             if (mainApp != null) {
                 try {
-                    mainApp.mostrarLogin(); // Asegúrate de que este método esté definido en Main
+                    mainApp.mostrarLogin();
                 } catch (Exception ex) {
                     Logger.getLogger(FXMLSignUpController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         } else {
-            // Si el usuario cancela, no se cierra la aplicación
-            event.consume();  // Consumiendo el evento
+            event.consume();  // Cancelar la acción si el usuario no confirma
         }
     }
 
-    // Inicialización de los componentes de la interfaz
+    /**
+     * Método de inicialización que configura los controles de la interfaz.
+     * Incluye la instalación de tooltips y validaciones de entrada para los
+     * campos de texto.
+     */
     @FXML
     public void initialize() {
         Tooltip tooltip = new Tooltip("Solo se pueden introducir números");
@@ -209,6 +311,7 @@ public class FXMLSignUpController {
             }
         });
 
+        // Verificación de las contraseñas
         String password = idContrasena.getText();
         String repeatPassword = idRepetirContrasena.getText();
 
@@ -220,6 +323,7 @@ public class FXMLSignUpController {
         // Marcar el checkbox "Activo" como seleccionado por defecto
         idActivo.setSelected(true);
 
+        // Configurar el menú contextual para cambiar el fondo de pantalla
         ContextMenu menu = new ContextMenu();
         MenuItem item1 = new MenuItem("Cambiar fondo de pantalla a San Francisco.");
         item1.setOnAction(this::cambiarFondoSanFrancisco);
@@ -229,7 +333,12 @@ public class FXMLSignUpController {
         fxmlSignUp.setOnMouseClicked(event -> controlMenu(event, menu));
     }
 
-    // Mostrar alertas de error o éxito
+    /**
+     * Muestra una alerta con el título y mensaje proporcionados.
+     *
+     * @param title El título de la alerta.
+     * @param message El mensaje que se mostrará en la alerta.
+     */
     @FXML
     void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -239,7 +348,13 @@ public class FXMLSignUpController {
         alert.showAndWait();
     }
 
-    // Mostrar/Ocultar la repetición de la contraseña
+    /**
+     * Muestra u oculta la repetición de la contraseña dependiendo de si el
+     * checkbox de mostrar la contraseña está marcado.
+     *
+     * @param event El evento generado por la acción de presionar el botón de
+     * ver/ocultar la repetición de la contraseña.
+     */
     @FXML
     private void verContraRepe(ActionEvent event) {
         if (idMostrarRepetirContrasena.isSelected()) {
@@ -257,6 +372,13 @@ public class FXMLSignUpController {
         }
     }
 
+    /**
+     * Muestra u oculta la contraseña dependiendo de si el checkbox de mostrar
+     * la contraseña está marcado.
+     *
+     * @param event El evento generado por la acción de presionar el botón de
+     * ver/ocultar la contraseña.
+     */
     @FXML
     private void verContra(ActionEvent event) {
         if (idMostrarContrasena.isSelected()) {
@@ -274,30 +396,17 @@ public class FXMLSignUpController {
         }
     }
 
-    public static void actualizarInterfazConMensaje(String mensaje) {
-        switch (mensaje) {
-            case "OK_SIGNUP":
-                //Vaya a la ventana de SignIn
-                break;
-            case "EXCEPCION_INTERNA":
-                //Alert de expcepcion interna
-                break;
-            case "USUARIO_EXISTE_EXCEPCION":
-                //Alert Excepción por usuario existente
-                break;
-            case "EXCEPCION_EN_CONEXIONES":
-                //Alert Error en las conexiones del sistema
-                break;
-        }
-    }
-
+    /**
+     * Controla el comportamiento del menú contextual en función del tipo de
+     * clic.
+     *
+     * @param event El evento de clic del ratón.
+     * @param menu El menú contextual que se debe mostrar u ocultar.
+     */
     private void controlMenu(MouseEvent event, ContextMenu menu) {
-        // Verifica si el clic fue hecho con el botón derecho
         if (event.getButton() == MouseButton.SECONDARY) {
-            // Muestra el menú contextual en la posición del clic
             menu.show(fxmlSignUp, event.getScreenX(), event.getScreenY());
         } else {
-            // Oculta el menú si se hace clic con otro botón
             menu.hide();
         }
     }

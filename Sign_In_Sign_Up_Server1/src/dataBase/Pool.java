@@ -222,7 +222,7 @@ public class Pool implements AutoCloseable {
      * @return El número máximo de conexiones configurado.
      */
     private void setConnections() {
-        ResourceBundle fichConf = ResourceBundle.getBundle("main.database");
+        ResourceBundle fichConf = ResourceBundle.getBundle("dataBase.database");
         this.maxPoolSize = Integer.valueOf(fichConf.getString("size"));
         this.databaseUrl = fichConf.getString("url");
         this.userName = fichConf.getString("username");

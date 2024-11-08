@@ -22,20 +22,56 @@ import vistas.FXMLSignInController;
 import vistas.FXMLSignUpController;
 
 /**
- *
+ * La clase {Cliente} implementa la interfaz {Signable} y se encarga de manejar
+ * las operaciones de conexión a un servidor para la autenticación y registro de usuarios
+ * en una aplicación cliente-servidor. Se conecta al servidor a través de un socket y envía
+ * solicitudes de inicio de sesión o registro. Además, recibe las respuestas del servidor 
+ * para realizar las acciones correspondientes.
+ * 
+ * Esta clase gestiona tanto el flujo de datos de entrada como el de salida entre el cliente
+ * y el servidor a través de objetos {ObjectInputStream} y {ObjectOutputStream}.
+ * 
  * @author Guillermo Flecha
  */
+
 public class Cliente implements Signable {
 
     private static ServerSocket serverSocket;
 
+    /**
+     * Socket utilizado para la conexión del cliente con el servidor.
+     */
     Socket socket = null;
+    /**
+     * Flujo de entrada utilizado para recibir datos del servidor.
+     */
     ObjectInputStream entrada = null;
+    /**
+     * Flujo de salida utilizado para enviar datos al servidor.
+     */
     ObjectOutputStream salida = null;
 
+    /**
+     * Dirección IP del servidor, obtenida desde un archivo de configuración.
+     */
     String IP = ResourceBundle.getBundle("modelo.conexionInfo").getString("IP");
+    /**
+     * Puerto del servidor, obtenido desde un archivo de configuración.
+     */
     int PUERTO = Integer.parseInt(ResourceBundle.getBundle("modelo.conexionInfo").getString("PUERTO"));
 
+    /**
+     * Realiza una solicitud de registro de usuario al servidor.
+     * 
+     * Este método establece una conexión con el servidor, envía la solicitud de registro
+     * del usuario y espera la respuesta del servidor. El flujo de datos se maneja a través
+     * de los objetos {ObjectInputStream} y {ObjectOutputStream}.
+     *
+     * @param user El objeto {User} que contiene la información del usuario a registrar.
+     * @return Un objeto {Stream} con la respuesta del servidor con respecto al registro.
+     * @throws Exception Si ocurre algún error durante el proceso de conexión o durante la
+     *                   comunicación con el servidor.
+     */
     @Override
     public Stream signUp(User user) throws Exception {
         Stream stream = null;
@@ -82,6 +118,18 @@ public class Cliente implements Signable {
         }
     }
 
+     /**
+     * Realiza una solicitud de inicio de sesión de usuario al servidor.
+     * 
+     * Este método establece una conexión con el servidor, envía la solicitud de inicio de sesión
+     * del usuario y espera la respuesta del servidor. El flujo de datos se maneja a través de los
+     * objetos {ObjectInputStream} y {ObjectOutputStream}.
+     *
+     * @param user El objeto {User} que contiene la información del usuario que intenta iniciar sesión.
+     * @return Un objeto {Stream} con la respuesta del servidor con respecto al inicio de sesión.
+     * @throws Exception Si ocurre algún error durante el proceso de conexión o durante la comunicación
+     *                   con el servidor.
+     */
     @Override
     public Stream signIn(User user) throws Exception {
         Stream stream = null;

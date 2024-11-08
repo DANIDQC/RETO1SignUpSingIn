@@ -1,4 +1,4 @@
 /*
- * Aqui info de lo que hay en el paquete.
+ * Paquete controlador que contiene las clases responsables de la lógica de control de la aplicación.
  */
 package controlador;

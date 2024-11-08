@@ -16,6 +16,27 @@ import libreria.Signable;
 import libreria.Stream;
 import libreria.User;
 
+/**
+ * La clase DAO (Data Access Object) permite el acceso a la base de datos para realizar
+ * operaciones de autenticación (sign-in) y registro de usuarios (sign-up).
+ * Implementa la interfaz Signable para asegurar la compatibilidad con métodos de
+ * autenticación y registro.
+ *
+ * Esta clase utiliza un pool de conexiones a la base de datos para mejorar la eficiencia
+ * y gestión de recursos. También maneja excepciones personalizadas para indicar problemas
+ * específicos, como errores de conexión, login fallido y duplicados de usuario.
+ *
+ * Consultas SQL utilizadas:
+ * - SELECT_USER: Verifica si un usuario existe en la base de datos y coincide con la contraseña.
+ * - SELECT_PARTNER: Obtiene información adicional de un usuario asociado (partner) mediante su ID.
+ * - OK_USER: Verifica si un login ya existe en la base de datos para evitar duplicados.
+ * - SIGN_PARTNER: Inserta un nuevo "partner" (usuario asociado) en la base de datos.
+ * - ID_PARTNER: Obtiene el ID más reciente de un "partner" creado en la base de datos.
+ * - SIGN_UP: Inserta un nuevo usuario en la base de datos y lo asocia a un "partner".
+ * - SELECT_EMAIL: Verifica si un correo electrónico ya está registrado en la base de datos.
+ * 
+ * @author Asier del Campo, Andoni Garcia
+ */
 public class DAO implements Signable {
 
     private final Pool connectionPool;
@@ -33,19 +54,33 @@ public class DAO implements Signable {
     private final String SIGN_UP = "INSERT INTO res_users (company_id, login, password, active, partner_id, notification_type) values (1, ?, ?, ?, ?, 'email')";
     private final String SELECT_EMAIL = "SELECT login FROM res_users WHERE login = ?";
 
+    /**
+     * Constructor de la clase DAO.
+     * 
+     * @param connectionPool El pool de conexiones utilizado para gestionar las conexiones
+     *                       a la base de datos
+     */
     public DAO(Pool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
+    /**
+     * Realiza el proceso de inicio de sesión (sign-in) para un usuario.
+     * Verifica las credenciales del usuario en la base de datos y devuelve
+     * un Stream con la información del usuario si las credenciales son correctas.
+     * 
+     * @param user El objeto User que contiene las credenciales de inicio de sesión
+     * @return Un Stream que indica el resultado del inicio de sesión, incluyendo
+     *         el usuario y el estado de la solicitud
+     * @throws ExcepcionLoginError Si las credenciales del usuario son incorrectas
+     * @throws ExcepcionConexionesError Si ocurre un problema al gestionar la conexión
+     */
     @Override
     public synchronized Stream signIn(User user) throws ExcepcionLoginError, ExcepcionConexionesError {
         Connection connection = null;
 
         try {
-            // Obtener la conexión del pool
             connection = connectionPool.getConnection();
-
-            // Preparar la consulta SQL
             PreparedStatement stmt = connection.prepareStatement(SELECT_USER);
             stmt.setString(1, user.getLogin());
             stmt.setString(2, user.getPassword());
@@ -60,14 +95,12 @@ public class DAO implements Signable {
                 ResultSet rs1 = stmt1.executeQuery();
                 if (rs1.next()) {
                     user.setNombreApellidos(rs1.getString("name"));
-                    Stream stream = new Stream(user, Request.OK_SINGIN);
-                    return stream;
+                    return new Stream(user, Request.OK_SINGIN);
                 }
             }
         } catch (SQLException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
-            Stream stream = new Stream(user, Request.LOG_IN_EXCEPCION);
-            return stream;
+            return new Stream(user, Request.LOG_IN_EXCEPCION);
         } finally {
             if (connection != null) {
                 try {
@@ -77,10 +110,22 @@ public class DAO implements Signable {
                 }
             }
         }
-        Stream stream = new Stream(user, Request.EXCEPCION_INTERNA);
-        return stream;
+        return new Stream(user, Request.EXCEPCION_INTERNA);
     }
 
+    /**
+     * Realiza el proceso de registro (sign-up) para un nuevo usuario.
+     * Inserta al usuario en la base de datos, incluyendo la creación de un partner
+     * y la asociación del usuario a este partner. Verifica si el usuario ya existe
+     * antes de realizar el registro.
+     * 
+     * @param user El objeto User que contiene los datos de registro del usuario
+     * @return Un Stream que indica el resultado del registro, incluyendo el usuario
+     *         y el estado de la solicitud
+     * @throws ExcepcionConexionesError Si ocurre un problema al gestionar la conexión
+     * @throws ExcepcionInternaServidorError Si ocurre un error interno durante el registro
+     * @throws ExcepcionUsuarioExisteError Si el usuario ya existe en la base de datos
+     */
     @Override
     public synchronized Stream signUp(User user) throws ExcepcionConexionesError, ExcepcionInternaServidorError, ExcepcionUsuarioExisteError {
         Connection connection = null;
@@ -92,7 +137,6 @@ public class DAO implements Signable {
         ResultSet rsEmail = null;
 
         try {
-            // Obtener la conexión del pool
             connection = connectionPool.getConnection();
 
             stmtEmail = connection.prepareStatement(SELECT_EMAIL);
@@ -104,7 +148,6 @@ public class DAO implements Signable {
                 return new Stream(user, Request.USUARIO_EXISTE_EXCEPCION);
             }
 
-            // Insertar en la tabla de Partner
             stmtPartner = connection.prepareStatement(SIGN_PARTNER);
             stmtPartner.setString(1, user.getNombreApellidos());
             stmtPartner.setString(2, user.getDireccion());
@@ -112,14 +155,12 @@ public class DAO implements Signable {
             stmtPartner.setInt(4, user.getCodigoPostal());
             stmtPartner.executeUpdate();
 
-            // Obtener el id_partner recién insertado
             stmtIdPartner = connection.prepareStatement(ID_PARTNER);
             rsIdPartner = stmtIdPartner.executeQuery();
 
             if (rsIdPartner.next()) {
                 int id_partner = rsIdPartner.getInt("id");
 
-                // Insertar en la tabla de Usuarios con el id_partner
                 stmtSignUp = connection.prepareStatement(SIGN_UP);
                 stmtSignUp.setString(1, user.getLogin());
                 stmtSignUp.setString(2, user.getPassword());
@@ -127,10 +168,8 @@ public class DAO implements Signable {
                 stmtSignUp.setInt(4, id_partner);
                 stmtSignUp.executeUpdate();
 
-                // Si se llega aquí, el registro fue exitoso
                 return new Stream(user, Request.OK_SINGUP);
             } else {
-                // No se encontró el id_partner, manejar error
                 return new Stream(user, Request.EXCEPCION_INTERNA);
             }
 
@@ -138,7 +177,6 @@ public class DAO implements Signable {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, "Error en signUp", ex);
             return new Stream(user, Request.EXCEPCION_EN_CONEXIONES);
         } finally {
-            // Cerrar recursos en orden
             try {
                 if (rsIdPartner != null) {
                     rsIdPartner.close();
@@ -156,7 +194,6 @@ public class DAO implements Signable {
                 Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, "Error al cerrar recursos", e);
             }
 
-            // Devolver la conexión al pool
             if (connection != null) {
                 try {
                     connectionPool.returnConnection(connection);
@@ -166,5 +203,5 @@ public class DAO implements Signable {
             }
         }
     }
-
 }
+
